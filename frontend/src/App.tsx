@@ -1,3 +1,4 @@
+import React from 'react'
 import {usePopularProducts, ProductCard} from '@shopify/shop-minis-react'
 
 export function App() {
