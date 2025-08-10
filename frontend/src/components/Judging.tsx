@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 
 interface JudgingProps {
   navigate?: (path: string | number) => void
@@ -7,7 +8,7 @@ interface JudgingProps {
 export function Judging({ navigate }: JudgingProps) {
   const [progress, setProgress] = useState(0)
   const [currentStep, setCurrentStep] = useState('Receiving submission...')
-
+  const navigation = useNavigateWithTransition()
   const judgingSteps = [
     'Receiving submission...',
     'Initial review...',
@@ -39,14 +40,13 @@ export function Judging({ navigate }: JudgingProps) {
   }, [progress])
 
   const handleViewResults = () => {
-    document.documentElement.setAttribute('data-navigation-type', 'forward');
-    navigate('/results');
+    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+    navigation('/results');
   }
 
   const handleGoBack = () => {
-    if (navigate) {
-      navigate(-1)
-    }
+    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.backward);
+    navigation(-1)
   }
 
   return (

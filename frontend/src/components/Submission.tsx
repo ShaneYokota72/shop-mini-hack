@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useCurrentUser } from '@shopify/shop-minis-react'
+import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 
 interface SubmissionProps {
   navigate?: (path: string | number) => void
@@ -11,7 +12,7 @@ export function Submission({ navigate }: SubmissionProps) {
   const [showPreview, setShowPreview] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
-
+  const navigation = useNavigateWithTransition()
   // Get current user from Shopify Shop Minis
   const { currentUser } = useCurrentUser()
 
@@ -32,9 +33,8 @@ export function Submission({ navigate }: SubmissionProps) {
   }, [])
 
   const handleGoBack = () => {
-    if (navigate) {
-      navigate(-1)
-    }
+    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.backward);
+    navigation(-1)
   }
 
   const handleSubmit = () => {
@@ -84,9 +84,8 @@ export function Submission({ navigate }: SubmissionProps) {
       sessionStorage.removeItem('canvasImage')
 
       // Navigate to judging page
-      if (navigate) {
-        navigate('/judging')
-      }
+      document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+      navigation('/judging')
     } catch (error) {
       console.error('Submission error:', error)
       setSubmitError(error instanceof Error ? error.message : 'Failed to submit. Please try again.')

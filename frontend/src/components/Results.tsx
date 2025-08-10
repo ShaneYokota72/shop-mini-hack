@@ -1,10 +1,12 @@
 import React from 'react'
+import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 
 interface ResultsProps {
   navigate?: (path: string | number) => void
 }
 
 export function Results({ navigate }: ResultsProps) {
+  const navigation = useNavigateWithTransition()
   // Simulate results
   const results = {
     overallScore: 87,
@@ -21,15 +23,13 @@ export function Results({ navigate }: ResultsProps) {
   }
 
   const handleStartNew = () => {
-    if (navigate) {
-      navigate('/')
-    }
+    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+    navigation('/')
   }
 
   const handleGoBack = () => {
-    if (navigate) {
-      navigate(-1)
-    }
+    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.backward);
+    navigation(-1)
   }
 
   const getScoreColor = (score: number) => {

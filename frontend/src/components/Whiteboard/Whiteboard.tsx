@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import { DragEndEvent } from '@dnd-kit/core'
 import { WhiteboardCanvas, WhiteboardItem } from './WhiteboardCanvas'
 import { useProductSearch } from '@shopify/shop-minis-react'
+import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 
 interface SearchImage {
   id: string
@@ -25,6 +26,7 @@ export function Whiteboard({ navigate }: WhiteboardProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [submittedQuery, setSubmittedQuery] = useState('')
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
+  const navigation = useNavigateWithTransition()
 
   // Use the Shopify product search hook
   const { products, loading, error } = useProductSearch({
@@ -33,10 +35,8 @@ export function Whiteboard({ navigate }: WhiteboardProps) {
   })
 
   const handleGoBack = () => {
-    console.log('Go back clicked')
-    if (navigate) {
-      navigate(-1)
-    }
+    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.backward);
+    navigation(-1)
   }
 
   // Alternative canvas capture method using native Canvas API
@@ -128,8 +128,8 @@ export function Whiteboard({ navigate }: WhiteboardProps) {
       console.error('No canvas image to store')
     }
     
-    document.documentElement.setAttribute('data-navigation-type', 'forward');
-    navigate('/submission');
+    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+    navigation('/submission');
   }
 
   const handleSearchSubmit = () => {
@@ -210,7 +210,7 @@ export function Whiteboard({ navigate }: WhiteboardProps) {
           onClick={handleGoBack}
           className="text-gray-400 hover:text-white text-sm transition-colors"
         >
-          ← Back
+          ←
         </button>
         <h1 className="text-xl font-medium text-white text-center">
           Make your concert outfit

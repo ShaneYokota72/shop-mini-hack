@@ -1,4 +1,6 @@
+import React from 'react'
 import {ArrowRight} from 'lucide-react'
+import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 
 interface LandingProps {
   navigate?: (path: string) => void
@@ -16,11 +18,10 @@ const IMAGES_PATH = [
 ]
 
 export function Landing({ navigate }: LandingProps) {
+  const navigation = useNavigateWithTransition()
   const handleStartChallenge = () => {
-    console.log('Start challenge clicked')
-    if (navigate) {
-      navigate('/whiteboard')
-    }
+    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+    navigation('/whiteboard')
   }
 
   return (
