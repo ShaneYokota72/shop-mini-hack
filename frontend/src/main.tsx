@@ -1,14 +1,16 @@
 import React, {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
 import './index.css'
-import {MinisContainer} from '@shopify/shop-minis-react'
+import {MinisContainer, MinisRouter} from '@shopify/shop-minis-react'
 
 import {App} from './App'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MinisContainer>
-      <App />
-    </MinisContainer>
+    <MinisRouter>
+      <MinisContainer>
+        <App />
+      </MinisContainer>
+    </MinisRouter>
   </StrictMode>
 )
