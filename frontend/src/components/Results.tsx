@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
+import { Friends } from './Friends'
 
 interface CardData {
   emoji: string;
@@ -29,6 +30,7 @@ export function Results() {
   const navigation = useNavigateWithTransition()
   const [result, setResult] = React.useState<any>(null)
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [isFriendsOpen, setIsFriendsOpen] = useState(false);
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -155,7 +157,9 @@ export function Results() {
     <div className="min-h-screen bg-[#000] relative overflow-x-hidden">
       {/* Friends icon top right */}
       <div className="absolute top-4 right-6 z-20">
-        <img src="/friends.svg" alt="Friends" className="w-8 h-8" />
+        <button onClick={() => setIsFriendsOpen(true)}>
+          <img src="/friends.svg" alt="Friends" className="w-8 h-8 cursor-pointer" />
+        </button>
       </div>
 
       {/* Main content centered */}
@@ -259,6 +263,12 @@ export function Results() {
           View Winners
         </button>
       </div>
+
+      {/* Friends Popup */}
+      <Friends 
+        isOpen={isFriendsOpen} 
+        onClose={() => setIsFriendsOpen(false)} 
+      />
     </div>
   )
 }
