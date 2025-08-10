@@ -85,36 +85,35 @@ export function Judging({ navigate }: JudgingProps) {
   return (
     <div className="min-h-screen bg-[#0D0D0D] px-2 text-white">
       <div className="max-w-2xl mx-auto flex flex-col items-center justify-center">
-        <div className='flex justify-between items-center w-full mb-4'>  
-          <button 
-            onClick={handleGoBack}
-            className="fixed hover:text-purple-200 text-left"
-          >
-            ← Back
-          </button>
-          <p className='font-semibold text-2xl mx-auto'>Which do you prefer?</p>
-          <p className="absolute right-3 text-right">{judgedCount}/3</p>
+        <h1 className="text-2xl font-bold text-white text-center mt-12">
+          Which is the better Concert Fit?
+        </h1>
+        <p className="">{judgedCount}/3</p>
+
+        <div className="flex items-center justify-center mt-8">
+          <JudgeCard 
+            title={judgeItems[0]?.title || "Loading..."}
+            handleJudged={handleJudged}
+            imageData={judgeItems[0]?.img || "https://via.placeholder.com/150"}
+            isLeft={true}
+          />
+
+          <div className="min-h-[400px] h-max w-[2px] rounded-full bg-white"/>
+
+          <JudgeCard 
+            title={judgeItems[1]?.title || "Loading..."}
+            handleJudged={handleJudged}
+            imageData={judgeItems[1]?.img || "https://via.placeholder.com/150"}
+            isLeft={false}
+          />
         </div>
 
-        <JudgeCard 
-          title={judgeItems[0]?.title || "Loading..."}
-          handleJudged={handleJudged}
-          imageData={judgeItems[0]?.img || "https://via.placeholder.com/150"}
-        />
-
-        <p className='mt-2'>OR</p>
-
-        <JudgeCard 
-          title={judgeItems[1]?.title || "Loading..."}
-          handleJudged={handleJudged}
-          imageData={judgeItems[1]?.img || "https://via.placeholder.com/150"}
-        />
-
-        <div className='h-[1px] w-4/5 my-4 bg-white rounded-full'/>
-
-        <div className='border-1 rounded-lg border-white p-2' onClick={handleTooTough}>
-          <p>Too tough</p>
-        </div>
+        <button
+          onClick={() => handleJudged(1)}
+          className="mt-6 text-white bg-[#3E3E3E] rounded-full py-2 px-4"
+        >
+          Too tough
+        </button>
       </div>
     </div>
   )

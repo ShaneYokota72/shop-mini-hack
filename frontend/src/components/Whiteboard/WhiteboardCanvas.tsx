@@ -110,7 +110,7 @@ export function WhiteboardCanvas({ items, onDragEnd, selectedItemId, onItemSelec
         <div 
           data-whiteboard-canvas
           className="relative bg-white rounded-lg shadow-lg border-2 border-gray-200 select-none overflow-hidden"
-          style={{ width: '500px', height: '400px' }}
+          style={{ width: '100%', height: '560px' }}
         >
           {/* Debug Info */}
           <div className="absolute top-2 right-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded z-10">
