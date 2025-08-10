@@ -51,8 +51,8 @@ export function Whiteboard() {
       if (!ctx) return ''
 
       // Set canvas size
-      canvas.width = 500
-      canvas.height = 400
+      canvas.width = 400
+      canvas.height = 560
 
       // Fill white background
       ctx.fillStyle = '#ffffff'
@@ -115,10 +115,29 @@ export function Whiteboard() {
     
     console.log('Canvas image captured:', !!canvasImage)
     console.log('Image length:', canvasImage.length)
-    
+  
     // Store image in sessionStorage to pass to next page
     if (canvasImage) {
       try {
+        // generate image with the canvasimage as an input
+        const response = await fetch('http://localhost:8080/api/img2img', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            image: canvasImage,
+            prompt: 'Make a model wearing thiis outfit for a concert'
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          sessionStorage.setItem('genImage', data.transformedImage || '');
+          console.log('Generated image:', data.transformedImage);
+        } else {
+          console.error('Image generation failed:', response.statusText);
+        }
         sessionStorage.setItem('canvasImage', canvasImage)
         console.log('Image stored in sessionStorage')
       } catch (error) {

@@ -2,10 +2,6 @@ import React, { useEffect, useState } from "react"
 import JudgeCard from "./JudgeCard"
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 
-interface JudgingProps {
-  navigate?: (path: string | number) => void
-}
-
 type JudgingItem = {
   "id": string,
   "uid": string,
@@ -13,22 +9,14 @@ type JudgingItem = {
   "elo": number,
   "updatedAt": string,
   "title": string,
-  "display_name": string | null
+  "display_name": string | null,
+  "generated_image": string
 }
 
-export function Judging({ navigate }: JudgingProps) {
+export function Judging() {
   const navigation = useNavigateWithTransition()
   const [judgedCount, setJudgedCount] = useState<number>(1)
   const [judgeItems, setJudgeItems] = useState<JudgingItem[]>([])
-
-  const handleGoBack = () => {
-    if (navigate) {
-      navigate(-1)
-    } else {
-      document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.backward);
-      navigation(-1)
-    }
-  }
 
   const getJudgeItems = async () => {
     const response = await fetch('http://localhost:8080/api/getTwoLeastRecentlyUsed')
@@ -64,16 +52,6 @@ export function Judging({ navigate }: JudgingProps) {
     setJudgedCount(prev => prev + 1)
   }
 
-  const handleTooTough = async () => {
-    if(judgedCount >= 3) {
-      document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
-      navigation('/results')
-    }
-    const newItems = await getJudgeItems()
-    setJudgeItems(newItems)
-    setJudgedCount(prev => prev + 1)
-  }
-
   useEffect(() => {
     getJudgeItems().then(items => {
       setJudgeItems(items)
@@ -94,7 +72,7 @@ export function Judging({ navigate }: JudgingProps) {
           <JudgeCard 
             title={judgeItems[0]?.title || "Loading..."}
             handleJudged={handleJudged}
-            imageData={judgeItems[0]?.img || "https://via.placeholder.com/150"}
+            imageData={judgeItems[0]?.generated_image || "https://via.placeholder.com/150"}
             isLeft={true}
           />
 
@@ -103,7 +81,7 @@ export function Judging({ navigate }: JudgingProps) {
           <JudgeCard 
             title={judgeItems[1]?.title || "Loading..."}
             handleJudged={handleJudged}
-            imageData={judgeItems[1]?.img || "https://via.placeholder.com/150"}
+            imageData={judgeItems[1]?.generated_image || "https://via.placeholder.com/150"}
             isLeft={false}
           />
         </div>

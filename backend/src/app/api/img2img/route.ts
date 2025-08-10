@@ -10,6 +10,20 @@ const supabase = createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
+// CORS headers
+const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
+
+export async function OPTIONS(request: NextRequest) {
+    return new Response(null, {
+        status: 200,
+        headers: corsHeaders,
+    })
+}
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
@@ -18,12 +32,12 @@ export async function POST(req: NextRequest) {
         const { image, prompt } = body;
 
         if (!image || !prompt) {
-            return NextResponse.json({ error: 'image and prompt are required' }, { status: 400 });
+            return NextResponse.json({ error: 'image and prompt are required' }, { status: 400 , headers: corsHeaders });
         }
 
         // Validate base64 image format
         if (!image.startsWith('data:image/')) {
-            return NextResponse.json({ error: 'Invalid image format. Expected base64 data URL.' }, { status: 400 });
+            return NextResponse.json({ error: 'Invalid image format. Expected base64 data URL.' }, { status: 400, headers: corsHeaders });
         }
 
         // Convert base64 to buffer for OpenAI API
@@ -44,22 +58,25 @@ export async function POST(req: NextRequest) {
         });
 
         if (!response.data || !response.data[0] || !response.data[0].b64_json) {
-            return NextResponse.json({ error: 'Failed to generate transformed image' }, { status: 500 });
+            return NextResponse.json({ error: 'Failed to generate transformed image' }, { status: 500, headers: corsHeaders });
         }
 
         const transformedImage = response.data[0].b64_json;
 
         // Convert back to data URL format
         const dataUrl = `data:image/png;base64,${transformedImage}`;
+        console.log("Transformed image data URL:", dataUrl);
 
         return NextResponse.json({ 
             success: true, 
             originalImage: image,
             transformedImage: dataUrl,
             prompt: prompt
+        }, {
+            headers: corsHeaders
         });
     } catch (error) {
         console.log('error:', error);
-        return NextResponse.json({ error: 'Failed to transform image' }, { status: 400 });
+        return NextResponse.json({ error: 'Failed to transform image' }, { status: 400, headers: corsHeaders });
     }
 }

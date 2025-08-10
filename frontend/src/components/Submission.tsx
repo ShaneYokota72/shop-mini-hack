@@ -109,7 +109,11 @@ export function Submission() {
             className="mx-auto w-[85%] rounded-3xl aspect-[9/13] object-cover"
           />
         ) : (
-          <p>Image View</p>
+          <img 
+            src={genImage} 
+            alt="Generated creation" 
+            className="mx-auto w-[85%] rounded-3xl aspect-[9/13] object-cover"
+          />
         )}
       </div>
 
