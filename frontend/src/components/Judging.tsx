@@ -25,7 +25,7 @@ const LoadingSpinner = () => (
 
 export function Judging() {
   const navigation = useNavigateWithTransition()
-  const [judgedCount, setJudgedCount] = useState<number>(1)
+  const [judgedCount, setJudgedCount] = useState<number>(0)
   const [judgeItems, setJudgeItems] = useState<JudgingItem[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
@@ -44,7 +44,7 @@ export function Judging() {
     // Wait for selection animation
     await new Promise(resolve => setTimeout(resolve, 800))
 
-    // send judge api call
+    // Send judge api call
     await fetch('http://localhost:8080/api/vote', {
       method: 'POST',
       headers: {
@@ -56,8 +56,15 @@ export function Judging() {
       })
     })
 
-    // if 3 items judged, check AI generation status
-    if (judgedCount >= 3) {
+    // First, increment the count to show the correct number
+    const newCount = judgedCount + 1
+    setJudgedCount(newCount)
+
+    // Wait a moment to show the updated count
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    // Now check if we've completed 3 judgments
+    if (newCount >= 3) {
       const generationStatus = sessionStorage.getItem('generationStatus')
       
       if (generationStatus === 'complete') {
@@ -72,20 +79,23 @@ export function Judging() {
       return
     }
 
+    // If we haven't finished all 3, fetch new items
     // Fade out current items
-    setIsTransitioning(true)
     await new Promise(resolve => setTimeout(resolve, 300))
 
-    // Fetch new items
-    const newItems = await getJudgeItems()
-    setJudgeItems(newItems)
+    try {
+      const newItems = await getJudgeItems()
+      setJudgeItems(newItems)
+    } catch (error) {
+      console.error('Error fetching new items:', error)
+      // Reset to prevent getting stuck
+      setIsTransitioning(false)
+      return
+    }
 
     // Reset states and fade in new items
     setSelectedCard(null)
     setIsTransitioning(false)
-
-    // update judged count
-    setJudgedCount(prev => prev + 1)
   }
 
   useEffect(() => {
