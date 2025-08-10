@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   DndContext,
   closestCenter,
@@ -12,7 +11,7 @@ import {
   useDraggable,
 } from '@dnd-kit/core'
 import {CSS} from '@dnd-kit/utilities'
-import classNames from 'classnames'
+import { clsx } from 'clsx';
 
 export interface WhiteboardItem {
   id: string
@@ -69,7 +68,7 @@ function DraggableItem({
       {...listeners}
       {...attributes}
       onClick={() => onSelect(item.id)}
-      className={classNames(
+      className={clsx(
         'cursor-grab active:cursor-grabbing rounded-lg border-2 overflow-hidden bg-white',
         {
           'border-blue-500 shadow-2xl scale-105': isDragging,

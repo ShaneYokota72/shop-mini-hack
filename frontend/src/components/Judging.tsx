@@ -20,7 +20,6 @@ export function Judging({ navigate }: JudgingProps) {
   const navigation = useNavigateWithTransition()
   const [judgedCount, setJudgedCount] = useState<number>(1)
   const [judgeItems, setJudgeItems] = useState<JudgingItem[]>([])
-  const navigation = useNavigateWithTransition()
 
   const handleGoBack = () => {
     if (navigate) {
