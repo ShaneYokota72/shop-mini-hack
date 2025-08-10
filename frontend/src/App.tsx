@@ -1,3 +1,4 @@
+import React from 'react'
 import {Routes, Route} from 'react-router'
 // Import all  components
 import {Landing} from './components/Landing'
