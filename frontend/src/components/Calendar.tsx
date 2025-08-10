@@ -126,10 +126,16 @@ export function Calendar() {
           {calendarDays.map((day, index) => (
             <div key={index} className="flex justify-center items-center h-12">
               {day && (
-                <div className={`
-                  flex items-center justify-center w-8 h-8 rounded-full
-                  ${day === 10 ? 'border-2 border-white' : ''}
-                `}>
+                <div 
+                  className={`
+                    flex items-center justify-center w-8 h-8 rounded-full
+                    ${day === 10 ? 'border-2 border-white cursor-pointer' : ''}
+                  `}
+                  onClick={day === 10 ? () => {
+                    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+                    navigation(`/calendar-preview/${friendId}`)
+                  } : undefined}
+                >
                   <span
                     style={{
                       color: '#FFF',

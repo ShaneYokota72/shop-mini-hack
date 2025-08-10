@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
-import peopleImage from '/people.png?url'
 import { Friends } from './Friends'
 
 interface CardData {

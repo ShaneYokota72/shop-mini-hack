@@ -8,6 +8,7 @@ import {Judging} from './components/Judging'
 import {Results} from './components/Results'
 import {Calendar} from './components/Calendar'
 import Winner from './components/Winner'
+import {CalendarPreview} from './components/CalendarPreview'
 
 export function App() {
   return (
@@ -18,6 +19,7 @@ export function App() {
       <Route path="/judging" element={<Judging />} />
       <Route path="/results" element={<Results />} />
       <Route path="/calendar/:friendId" element={<Calendar />} />
+      <Route path="/calendar-preview/:friendId" element={<CalendarPreview />} />
       <Route path="/winners-1" element={<Winner />} />
       <Route path="/winners-2" element={<Winner />} />
       <Route path="/winners-3" element={<Winner />} />
