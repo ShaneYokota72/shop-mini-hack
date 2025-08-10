@@ -70,7 +70,7 @@ export function Whiteboard() {
           return
         }
 
-        images.forEach((img, index) => {
+        images.forEach((img) => {
           const newImg = new Image()
           newImg.crossOrigin = 'anonymous'
           
@@ -116,30 +116,16 @@ export function Whiteboard() {
     console.log('Canvas image captured:', !!canvasImage)
     console.log('Image length:', canvasImage.length)
   
-    // Store image in sessionStorage to pass to next page
+    // Store canvas image immediately
     if (canvasImage) {
       try {
-        // generate image with the canvasimage as an input
-        const response = await fetch('http://localhost:8080/api/img2img', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            image: canvasImage,
-            prompt: 'Make a model wearing thiis outfit for a concert'
-          })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          sessionStorage.setItem('genImage', data.transformedImage || '');
-          console.log('Generated image:', data.transformedImage);
-        } else {
-          console.error('Image generation failed:', response.statusText);
-        }
         sessionStorage.setItem('canvasImage', canvasImage)
-        console.log('Image stored in sessionStorage')
+        sessionStorage.setItem('generationStatus', 'pending')
+        console.log('Canvas image stored in sessionStorage')
+
+        // Start AI generation asynchronously (don't await)
+        generateAIImage(canvasImage)
+
       } catch (error) {
         console.error('Failed to store image in sessionStorage:', error)
       }
@@ -147,8 +133,38 @@ export function Whiteboard() {
       console.error('No canvas image to store')
     }
     
+    // Navigate to judging immediately
     document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
-    navigation('/submission');
+    navigation('/judging');
+  }
+
+  // Separate async function for AI generation
+  const generateAIImage = async (canvasImage: string) => {
+    try {
+      const response = await fetch('http://localhost:8080/api/img2img', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: canvasImage,
+          prompt: 'Make a model wearing thiis outfit for a concert'
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        sessionStorage.setItem('genImage', data.transformedImage || '');
+        sessionStorage.setItem('generationStatus', 'complete');
+        console.log('AI generation completed');
+      } else {
+        console.error('Image generation failed:', response.statusText);
+        sessionStorage.setItem('generationStatus', 'failed');
+      }
+    } catch (error) {
+      console.error('AI generation error:', error);
+      sessionStorage.setItem('generationStatus', 'failed');
+    }
   }
 
   const handleSearchSubmit = () => {
@@ -164,7 +180,7 @@ export function Whiteboard() {
   // Convert products to SearchImage format
   const productImages: SearchImage[] = products?.map(product => ({
     id: product.id,
-    url: product.images?.[0]?.url || product.featuredImage?.url || '',
+    url: product.featuredImage?.url || '',
     alt: product.title || 'Product'
   })) || []
 
@@ -411,7 +427,7 @@ export function Whiteboard() {
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         @keyframes slide-up {
           from {
             transform: translateY(100%);
@@ -426,4 +442,4 @@ export function Whiteboard() {
       `}</style>
     </div>
   )
-} 
+}
