@@ -28,18 +28,20 @@ function VotingComponent() {
       if (!res.ok) {
         throw new Error("Failed to fetch canvases for voting");
       }
-      const data = await res.json();
+      const response = await res.json();
+      const data = response.data || response; // Handle both {data: []} and [] response formats
+      const itemsArray = Array.isArray(data) ? data : []; // Ensure it's always an array
       
-      if (data.length < 2) {
+      if (itemsArray.length < 2) {
         setError("Need at least 2 canvas items to start voting (may have exhausted unique pairs)");
         return;
       }
       
-      setCanvasA(data[0]);
-      setCanvasB(data[1]);
+      setCanvasA(itemsArray[0]);
+      setCanvasB(itemsArray[1]);
       
       // Add the new IDs to the excluded list
-      const newIds = data.map((item: any) => item.id);
+      const newIds = itemsArray.map((item: any) => item.id);
       setExcludedIds(prev => [...prev, ...newIds]);
       
     } catch (error) {
@@ -168,15 +170,38 @@ function VotingComponent() {
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <strong>UID:</strong> {canvasA.uid}
               </p>
+              
+              {/* Original Image */}
               {canvasA.img && (
                 <div className="mt-3">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    <strong>Original Image:</strong>
+                  </p>
                   <img
                     src={canvasA.img}
-                    alt="Canvas A"
-                    className="w-full h-48 object-cover rounded-md border border-gray-200 dark:border-gray-600"
+                    alt="Canvas A Original"
+                    className="w-full h-32 object-cover rounded-md border border-gray-200 dark:border-gray-600"
                   />
                 </div>
               )}
+              
+              {/* Transformed Image */}
+              <div className="mt-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  <strong>Transformed Image:</strong>
+                </p>
+                {canvasA.generated_image ? (
+                  <img
+                    src={canvasA.generated_image}
+                    alt="Canvas A Transformed"
+                    className="w-full h-32 object-cover rounded-md border border-gray-200 dark:border-gray-600"
+                  />
+                ) : (
+                  <div className="w-full h-32 bg-gray-200 dark:bg-gray-600 rounded-md border border-gray-300 dark:border-gray-500 flex items-center justify-center">
+                    <span className="text-gray-500 dark:text-gray-400 text-sm">None</span>
+                  </div>
+                )}
+              </div>
               
               <button
                 onClick={() => handleVote(canvasA.id, canvasB.id)}
@@ -209,15 +234,38 @@ function VotingComponent() {
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <strong>UID:</strong> {canvasB.uid}
               </p>
+              
+              {/* Original Image */}
               {canvasB.img && (
                 <div className="mt-3">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    <strong>Original Image:</strong>
+                  </p>
                   <img
                     src={canvasB.img}
-                    alt="Canvas B"
-                    className="w-full h-48 object-cover rounded-md border border-gray-200 dark:border-gray-600"
+                    alt="Canvas B Original"
+                    className="w-full h-32 object-cover rounded-md border border-gray-200 dark:border-gray-600"
                   />
                 </div>
               )}
+              
+              {/* Transformed Image */}
+              <div className="mt-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  <strong>Transformed Image:</strong>
+                </p>
+                {canvasB.generated_image ? (
+                  <img
+                    src={canvasB.generated_image}
+                    alt="Canvas B Transformed"
+                    className="w-full h-32 object-cover rounded-md border border-gray-200 dark:border-gray-600"
+                  />
+                ) : (
+                  <div className="w-full h-32 bg-gray-200 dark:bg-gray-600 rounded-md border border-gray-300 dark:border-gray-500 flex items-center justify-center">
+                    <span className="text-gray-500 dark:text-gray-400 text-sm">None</span>
+                  </div>
+                )}
+              </div>
               
               <button
                 onClick={() => handleVote(canvasB.id, canvasA.id)}
@@ -345,10 +393,12 @@ function GetTwoLeastRecentlyUsedComponent() {
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <strong>Updated:</strong> {item.updatedAt ? new Date(item.updatedAt).toLocaleString() : "N/A"}
               </p>
+              
+              {/* Original Image */}
               {item.img && (
                 <div className="mt-3">
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    <strong>Image:</strong>
+                    <strong>Original Image:</strong>
                   </p>
                   <img
                     src={item.img}
@@ -357,6 +407,24 @@ function GetTwoLeastRecentlyUsedComponent() {
                   />
                 </div>
               )}
+              
+              {/* Transformed Image */}
+              <div className="mt-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  <strong>Transformed Image:</strong>
+                </p>
+                {item.generated_image ? (
+                  <img
+                    src={item.generated_image}
+                    alt="Transformed Canvas"
+                    className="w-full h-32 object-cover rounded-md border border-gray-200 dark:border-gray-600"
+                  />
+                ) : (
+                  <div className="w-full h-32 bg-gray-200 dark:bg-gray-600 rounded-md border border-gray-300 dark:border-gray-500 flex items-center justify-center">
+                    <span className="text-gray-500 dark:text-gray-400 text-sm">None</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ))}
