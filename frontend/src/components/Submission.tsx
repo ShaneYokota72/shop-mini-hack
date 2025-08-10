@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useCurrentUser } from '@shopify/shop-minis-react'
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
+import CanvasImageView from './CanvasImageView'
 
 export function Submission() {
   const [title, setTitle] = useState('')
@@ -65,7 +66,8 @@ export function Submission() {
           uid: generateUUID(),
           img: canvasImage,
           title: title.trim(),
-          displayName: currentUser?.displayName || 'Anonymous User'
+          displayName: currentUser?.displayName || 'Anonymous User',
+          transformedImage: genImage || null
         })
       })
 
@@ -96,7 +98,7 @@ export function Submission() {
   return (
     <div className="min-h-screen bg-black flex flex-col">
       {/* Content */}
-      <div className='flex mx-auto text-white text-2xl font-semibold gap-24'>
+      {/* <div className='flex mx-auto text-white text-2xl font-semibold gap-24'>
         <p onClick={() => setIsCanvasView(true)} className={`${isCanvasView ? '' : 'text-slate-400'}`}>Canvas</p>
         <p onClick={() => setIsCanvasView(false)} className={`${!isCanvasView ? '' : 'text-slate-400'}`}>Image</p>
       </div>
@@ -115,7 +117,12 @@ export function Submission() {
             className="mx-auto w-[85%] rounded-3xl aspect-[9/13] object-cover"
           />
         )}
-      </div>
+      </div> */}
+
+      <CanvasImageView
+        canvasImage={canvasImage}
+        genImage={genImage}
+      />
 
       <div className="flex-1 p-6">
         <div className="max-w-md mx-auto">

@@ -1,4 +1,3 @@
-import React from 'react'
 import {Routes, Route} from 'react-router'
 
 // Import all page components
@@ -7,6 +6,7 @@ import {Whiteboard} from './components/Whiteboard/Whiteboard'
 import {Submission} from './components/Submission'
 import {Judging} from './components/Judging'
 import {Results} from './components/Results'
+import Winner from './components/Winner'
 
 export function App() {
   return (
@@ -16,6 +16,9 @@ export function App() {
       <Route path="/submission" element={<Submission />} />
       <Route path="/judging" element={<Judging />} />
       <Route path="/results" element={<Results />} />
+      <Route path="/winners-1" element={<Winner />} />
+      <Route path="/winners-2" element={<Winner />} />
+      <Route path="/winners-3" element={<Winner />} />
     </Routes>
   )
 }
