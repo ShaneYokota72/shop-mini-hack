@@ -60,30 +60,9 @@ export function Results() {
     setCurrentCardIndex((prev) => (prev - 1 + cardData.length) % cardData.length);
   };
 
-  const getWinners = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/getAll')
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-      const data = await response.json()
-      const sortedData = data.data.sort((a: any, b: any) => b.elo - a.elo)
-      const topThree = sortedData.slice(0, 3)
-      console.log('Top 3 Winners:', topThree)
-      return topThree
-    } catch (error) {
-      console.error('Error fetching winners:', error)
-    }
-  };
-
   const handleViewWinners = async () => {
-    const winners = await getWinners()
-
-    // save winners to session storage
-    sessionStorage.setItem('winners', JSON.stringify(winners))
-
     document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
-    navigation('/winners-1')
+    navigation('/winners')
   }
 
   const renderCard = (index: number, position: 'left' | 'center' | 'right') => {

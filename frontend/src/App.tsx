@@ -16,9 +16,7 @@ export function App() {
       <Route path="/submission" element={<Submission />} />
       <Route path="/judging" element={<Judging />} />
       <Route path="/results" element={<Results />} />
-      <Route path="/winners-1" element={<Winner />} />
-      <Route path="/winners-2" element={<Winner />} />
-      <Route path="/winners-3" element={<Winner />} />
+      <Route path="/winners" element={<Winner />} />
     </Routes>
   )
 }
