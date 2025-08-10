@@ -9,7 +9,7 @@ export type Database = {
   // Allows to automatically instanciate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: ‘XX’ }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.4"
+    PostgrestVersion: '13.0.4'
   }
   graphql_public: {
     Tables: {
@@ -40,6 +40,7 @@ export type Database = {
     Tables: {
       Canvas: {
         Row: {
+          display_name: string | null
           elo: number | null
           id: string
           img: string | null
@@ -48,6 +49,7 @@ export type Database = {
           updatedAt: string | null
         }
         Insert: {
+          display_name?: string | null
           elo?: number | null
           id?: string
           img?: string | null
@@ -56,6 +58,7 @@ export type Database = {
           updatedAt?: string | null
         }
         Update: {
+          display_name?: string | null
           elo?: number | null
           id?: string
           img?: string | null
@@ -80,11 +83,11 @@ export type Database = {
     }
   }
 }
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>]
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
@@ -198,9 +201,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-
-
-
-
-
-

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useCurrentUser } from '@shopify/shop-minis-react'
 
 interface SubmissionProps {
   navigate?: (path: string | number) => void
@@ -10,6 +11,9 @@ export function Submission({ navigate }: SubmissionProps) {
   const [showPreview, setShowPreview] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+
+  // Get current user from Shopify Shop Minis
+  const { currentUser } = useCurrentUser()
 
   useEffect(() => {
     console.log('Submission component mounted')
@@ -63,7 +67,8 @@ export function Submission({ navigate }: SubmissionProps) {
         body: JSON.stringify({
           uid: generateUUID(),
           img: canvasImage,
-          title: title.trim()
+          title: title.trim(),
+          displayName: currentUser?.displayName || 'Anonymous User'
         })
       })
 
@@ -239,9 +244,9 @@ export function Submission({ navigate }: SubmissionProps) {
             >
               Preview & Submit
             </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   )
 } 
