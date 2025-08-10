@@ -7,6 +7,7 @@ import {Whiteboard} from './components/Whiteboard/Whiteboard'
 import {Submission} from './components/Submission'
 import {Judging} from './components/Judging'
 import {Results} from './components/Results'
+import {Calendar} from './components/Calendar'
 
 export function App() {
   return (
@@ -16,6 +17,7 @@ export function App() {
       <Route path="/submission" element={<Submission />} />
       <Route path="/judging" element={<Judging />} />
       <Route path="/results" element={<Results />} />
+      <Route path="/calendar/:friendId" element={<Calendar />} />
     </Routes>
   )
 }
