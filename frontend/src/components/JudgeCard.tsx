@@ -166,7 +166,7 @@ export default function JudgeCard({
           }
         `}
       >
-        {isSelected ? '✓ Selected' : isLeft ? 'Choose Left' : 'Choose Right'}
+        {isSelected ? '✓ Selected' : isLeft ? 'Left' : 'Right'}
       </button>
     </div>
   )

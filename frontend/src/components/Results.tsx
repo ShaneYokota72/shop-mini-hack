@@ -35,7 +35,7 @@ export function Results() {
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/getAll')
+        const response = await fetch('https://shop-mini-hack-tau.vercel.app/api/getAll')
         if (!response.ok) {
           throw new Error('Network response was not ok')
         }
