@@ -1,11 +1,7 @@
 import React from 'react'
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 
-interface ResultsProps {
-  navigate?: (path: string | number) => void
-}
-
-export function Results({ navigate }: ResultsProps) {
+export function Results() {
   const navigation = useNavigateWithTransition()
   // Simulate results
   const results = {

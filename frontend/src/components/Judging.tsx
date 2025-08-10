@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 
-interface JudgingProps {
-  navigate?: (path: string | number) => void
-}
-
-export function Judging({ navigate }: JudgingProps) {
+export function Judging() {
   const [progress, setProgress] = useState(0)
   const [currentStep, setCurrentStep] = useState('Receiving submission...')
   const navigation = useNavigateWithTransition()

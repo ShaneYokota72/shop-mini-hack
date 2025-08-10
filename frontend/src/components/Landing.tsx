@@ -2,9 +2,6 @@ import React from 'react'
 import {ArrowRight} from 'lucide-react'
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 
-interface LandingProps {
-  navigate?: (path: string) => void
-}
 
 const IMAGES_PATH = [
   'https://cdn.shopify.com/s/files/1/0582/1648/0813/products/burrata_hat.jpg?v=1725129175&width=2048',
@@ -17,7 +14,7 @@ const IMAGES_PATH = [
   'https://cdn.shopify.com/s/files/1/2037/3509/files/818eb6ffe674d7308b378058171fe14b0f4964760c4c43bf28cc2e76353848e1.jpg?v=1754586715&width=2048',
 ]
 
-export function Landing({ navigate }: LandingProps) {
+export function Landing() {
   const navigation = useNavigateWithTransition()
   const handleStartChallenge = () => {
     document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);

@@ -20,7 +20,7 @@ const dummyImages: SearchImage[] = [
   { id: '6', url: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=150&h=150&fit=crop', alt: 'Denim jeans' },
 ]
 
-export function Whiteboard({ navigate }: WhiteboardProps) {
+export function Whiteboard() {
   const [items, setItems] = useState<WhiteboardItem[]>([])
   const [showAddPanel, setShowAddPanel] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
