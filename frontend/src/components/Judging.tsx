@@ -17,7 +17,8 @@ type JudgingItem = {
 }
 
 export function Judging({ navigate }: JudgingProps) {
-  const [judgedCount, setJudgedCount] = useState(1)
+  const navigation = useNavigateWithTransition()
+  const [judgedCount, setJudgedCount] = useState<number>(1)
   const [judgeItems, setJudgeItems] = useState<JudgingItem[]>([])
   const navigation = useNavigateWithTransition()
 
@@ -51,12 +52,8 @@ export function Judging({ navigate }: JudgingProps) {
 
     // if 3 items judged, navigate to results
     if (judgedCount >= 3) {
-      if (navigate) {
-        navigate('/results')
-      } else {
-        document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
-        navigation('/results')
-      }
+      document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+      navigation('/results')
       return
     }
 
@@ -69,14 +66,9 @@ export function Judging({ navigate }: JudgingProps) {
   }
 
   const handleTooTough = async () => {
-    if(judgedCount >= 2) {
-      if (navigate) {
-        navigate('/results')
-      } else {
-        document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
-        navigation('/results')
-      }
-      return
+    if(judgedCount >= 3) {
+      document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+      navigation('/results')
     }
     const newItems = await getJudgeItems()
     setJudgeItems(newItems)
