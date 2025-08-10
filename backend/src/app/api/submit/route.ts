@@ -26,7 +26,7 @@ export async function OPTIONS(request: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { uid, img, title, displayName, transformedImage } = body;
+        const { uid, img, title, displayName, transformedImage, productIds } = body;
 
         if (!img && !transformedImage) {
             return NextResponse.json({ error: 'Either img or transformedImage is required' }, { 
@@ -35,9 +35,10 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        // Log the displayName and transformedImage for debugging
+        // Log the data for debugging
         console.log('Submission from user:', displayName);
         console.log('Has transformed image:', !!transformedImage);
+        console.log('Product IDs:', productIds);
 
         // Generate UID if not provided or invalid
         let finalUid = uid;
@@ -73,6 +74,11 @@ export async function POST(req: NextRequest) {
         // Add transformed image if provided
         if (transformedImage) {
             recordData.generated_image = transformedImage;
+        }
+
+        // Add product IDs if provided
+        if (productIds && Array.isArray(productIds)) {
+            recordData.product_ids = productIds;
         }
 
         let result;

@@ -116,12 +116,16 @@ export function Whiteboard() {
     console.log('Canvas image captured:', !!canvasImage)
     console.log('Image length:', canvasImage.length)
   
-    // Store canvas image immediately
+    // Store canvas image and product IDs immediately
     if (canvasImage) {
       try {
         sessionStorage.setItem('canvasImage', canvasImage)
         sessionStorage.setItem('generationStatus', 'pending')
-        console.log('Canvas image stored in sessionStorage')
+        
+        // Extract and store product IDs from whiteboard items
+        const productIds = items.map(item => item.productId).filter(id => id !== 'dummy') // Filter out dummy image IDs
+        sessionStorage.setItem('productIds', JSON.stringify(productIds))
+        console.log('Canvas image and product IDs stored in sessionStorage', productIds)
 
         // Start AI generation asynchronously (don't await)
         generateAIImage(canvasImage)
@@ -197,6 +201,7 @@ export function Whiteboard() {
     const newItem: WhiteboardItem = {
       id: `item-${Date.now()}-${Math.random()}`,
       imageUrl: image.url,
+      productId: image.id, // Store the actual product ID (or dummy ID for fallback images)
       x: 200, // Center horizontally (500px whiteboard - 100px item = 400px / 2 = 200px)
       y: 150, // Center vertically (400px whiteboard - 100px item = 300px / 2 = 150px)
       width: 100,

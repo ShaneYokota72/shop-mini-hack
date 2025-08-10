@@ -16,6 +16,7 @@ import { clsx } from 'clsx';
 export interface WhiteboardItem {
   id: string
   imageUrl: string
+  productId: string  // Add this to track the actual Shopify product ID
   x: number
   y: number
   width: number

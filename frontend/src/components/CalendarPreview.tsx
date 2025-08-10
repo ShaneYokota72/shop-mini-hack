@@ -76,7 +76,7 @@ export function CalendarPreview() {
           setSubmissionData(result.data[0])
         } else {
           setError('No submission data available')
-        }
+        } 
       } catch (error) {
         console.error('Error fetching submission data:', error)
         setError('Failed to load submission data')

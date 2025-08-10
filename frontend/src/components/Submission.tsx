@@ -57,6 +57,10 @@ export function Submission() {
     setSubmitError(null)
 
     try {
+      // Get product IDs from sessionStorage
+      const storedProductIds = sessionStorage.getItem('productIds')
+      const productIds = storedProductIds ? JSON.parse(storedProductIds) : []
+
       const response = await fetch('http://localhost:8080/api/submit', {
         method: 'POST',
         headers: {
@@ -67,7 +71,8 @@ export function Submission() {
           img: canvasImage,
           title: title.trim(),
           displayName: currentUser?.displayName || 'Anonymous User',
-          transformedImage: genImage || null
+          transformedImage: genImage || null,
+          productIds: productIds // Add product IDs to submission
         })
       })
 
@@ -79,10 +84,11 @@ export function Submission() {
       const result = await response.json()
       console.log('Submission successful:', result)
 
-      // Clean up stored images after successful submission
+      // Clean up stored data after successful submission
       sessionStorage.removeItem('canvasImage')
       sessionStorage.removeItem('genImage')
       sessionStorage.removeItem('generationStatus')
+      sessionStorage.removeItem('productIds')
 
       // Navigate directly to results page (skip judging since it's already done)
       document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
