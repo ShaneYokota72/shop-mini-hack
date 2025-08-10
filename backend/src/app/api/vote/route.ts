@@ -9,17 +9,31 @@ const supabase = createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
+// CORS headers
+const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
+
+export async function OPTIONS(request: NextRequest) {
+    return new Response(null, {
+        status: 200,
+        headers: corsHeaders,
+    })
+}
+
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const { winnerId, loserId } = body;
 
         if (!winnerId || !loserId) {
-            return NextResponse.json({ error: 'winnerId and loserId are required' }, { status: 400 });
+            return NextResponse.json({ error: 'winnerId and loserId are required' }, { status: 400, headers: corsHeaders });
         }
 
         if (winnerId === loserId) {
-            return NextResponse.json({ error: 'winnerId and loserId must be different' }, { status: 400 });
+            return NextResponse.json({ error: 'winnerId and loserId must be different' }, { status: 400, headers: corsHeaders });
         }
 
         // Get current ELO ratings for both canvases
@@ -66,9 +80,11 @@ export async function POST(req: NextRequest) {
                 winner: { id: winnerId, oldElo: winner.elo || 1000, newElo: newWinnerElo },
                 loser: { id: loserId, oldElo: loser.elo || 1000, newElo: newLoserElo }
             }
+        }, {
+            headers: corsHeaders
         });
     } catch (error) {
         console.log('error:', error);
-        return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
+        return NextResponse.json({ error: 'Invalid request data' }, { status: 400, headers: corsHeaders });
     }
 } 

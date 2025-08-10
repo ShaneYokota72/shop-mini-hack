@@ -1,130 +1,128 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from "react"
+import JudgeCard from "./JudgeCard"
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 
-export function Judging() {
-  const [progress, setProgress] = useState(0)
-  const [currentStep, setCurrentStep] = useState('Receiving submission...')
+interface JudgingProps {
+  navigate?: (path: string | number) => void
+}
+
+type JudgingItem = {
+  "id": string,
+  "uid": string,
+  "img": string,
+  "elo": number,
+  "updatedAt": string,
+  "title": string,
+  "display_name": string | null
+}
+
+export function Judging({ navigate }: JudgingProps) {
+  const [judgedCount, setJudgedCount] = useState(1)
+  const [judgeItems, setJudgeItems] = useState<JudgingItem[]>([])
   const navigation = useNavigateWithTransition()
-  const judgingSteps = [
-    'Receiving submission...',
-    'Initial review...',
-    'Evaluating creativity...',
-    'Assessing technical merit...',
-    'Scoring innovation...',
-    'Final deliberation...',
-    'Preparing results...'
-  ]
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        const newProgress = prev + Math.random() * 15 + 5
-        if (newProgress >= 100) {
-          clearInterval(interval)
-          return 100
-        }
-        return newProgress
-      })
-    }, 800)
-
-    return () => clearInterval(interval)
-  }, [])
-
-  useEffect(() => {
-    const stepIndex = Math.floor((progress / 100) * judgingSteps.length)
-    setCurrentStep(judgingSteps[Math.min(stepIndex, judgingSteps.length - 1)])
-  }, [progress])
-
-  const handleViewResults = () => {
-    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
-    navigation('/results');
-  }
 
   const handleGoBack = () => {
-    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.backward);
-    navigation(-1)
+    if (navigate) {
+      navigate(-1)
+    } else {
+      document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.backward);
+      navigation(-1)
+    }
   }
 
+  const getJudgeItems = async () => {
+    const response = await fetch('http://localhost:8080/api/getTwoLeastRecentlyUsed')
+    const data = await response.json()
+    return data.data
+  }
+
+  const handleJudged = async (chosenItem: Number) => {
+    // send judge api call
+    await fetch('http://localhost:8080/api/vote', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        winnerId: chosenItem === 1 ? judgeItems[0].id : judgeItems[1].id,
+        loserId: chosenItem === 1 ? judgeItems[1].id : judgeItems[0].id
+      })
+    })
+
+    // if 3 items judged, navigate to results
+    if (judgedCount >= 3) {
+      if (navigate) {
+        navigate('/results')
+      } else {
+        document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+        navigation('/results')
+      }
+      return
+    }
+
+    // otherwise, fetch new items
+    const newItems = await getJudgeItems()
+    setJudgeItems(newItems)
+
+    // update judged count
+    setJudgedCount(prev => prev + 1)
+  }
+
+  const handleTooTough = async () => {
+    if(judgedCount >= 2) {
+      if (navigate) {
+        navigate('/results')
+      } else {
+        document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+        navigation('/results')
+      }
+      return
+    }
+    const newItems = await getJudgeItems()
+    setJudgeItems(newItems)
+    setJudgedCount(prev => prev + 1)
+  }
+
+  useEffect(() => {
+    getJudgeItems().then(items => {
+      setJudgeItems(items)
+    }).catch(error => {
+      console.error('Error fetching judge items:', error)
+    })
+  },[])
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 pt-12 px-4 pb-6">
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-6">
+    <div className="min-h-screen bg-[#0D0D0D] px-2 text-white">
+      <div className="max-w-2xl mx-auto flex flex-col items-center justify-center">
+        <div className='flex justify-between items-center w-full mb-4'>  
           <button 
             onClick={handleGoBack}
-            className="text-gray-400 hover:text-white text-sm transition-colors"
+            className="fixed hover:text-purple-200 text-left"
           >
             ← Back
           </button>
-          <h1 className="text-3xl font-bold mb-2 text-gray-800">
-            ⚖️ Judging in Progress
-          </h1>
-          <p className="text-gray-600">
-            Our expert judges are reviewing your submission
-          </p>
+          <p className='font-semibold text-2xl mx-auto'>Which do you prefer?</p>
+          <p className="absolute right-3 text-right">{judgedCount}/3</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <div className="text-center mb-8">
-            <div className="text-6xl mb-4">👨‍⚖️</div>
-            <h2 className="text-2xl font-semibold mb-2 text-gray-700">Evaluation in Progress</h2>
-            <p className="text-gray-600">Your submission is being carefully reviewed</p>
-          </div>
+        <JudgeCard 
+          title={judgeItems[0]?.title || "Loading..."}
+          handleJudged={handleJudged}
+          imageData={judgeItems[0]?.img || "https://via.placeholder.com/150"}
+        />
 
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-gray-700">Progress</span>
-              <span className="text-sm font-medium text-gray-700">{Math.round(progress)}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div 
-                className="bg-gradient-to-r from-purple-600 to-pink-600 h-3 rounded-full transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-            <p className="text-center mt-4 text-gray-600 font-medium">{currentStep}</p>
-          </div>
+        <p className='mt-2'>OR</p>
 
-          <div className="bg-gray-50 rounded-lg p-6 mb-8">
-            <h3 className="font-semibold mb-4 text-gray-700">🔍 Evaluation Criteria:</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center space-x-3">
-                <span className="text-xl">💡</span>
-                <span className="text-sm text-gray-600">Creativity & Innovation</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <span className="text-xl">⚙️</span>
-                <span className="text-sm text-gray-600">Technical Execution</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <span className="text-xl">👤</span>
-                <span className="text-sm text-gray-600">User Experience</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <span className="text-xl">🎯</span>
-                <span className="text-sm text-gray-600">Problem Solving</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <span className="text-xl">🎨</span>
-                <span className="text-sm text-gray-600">Visual Appeal</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <span className="text-xl">⭐</span>
-                <span className="text-sm text-gray-600">Overall Impact</span>
-              </div>
-            </div>
-          </div>
+        <JudgeCard 
+          title={judgeItems[1]?.title || "Loading..."}
+          handleJudged={handleJudged}
+          imageData={judgeItems[1]?.img || "https://via.placeholder.com/150"}
+        />
 
-          {progress >= 100 && (
-            <div className="text-center">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
-                <h3 className="font-semibold text-green-800 mb-2">✅ Judging Complete!</h3>
-                <p className="text-green-700">Your results are ready to view.</p>
-              </div>
-              <button onClick={handleViewResults}>
-                View Results 🏆
-              </button>
-            </div>
-          )}
+        <div className='h-[1px] w-4/5 my-4 bg-white rounded-full'/>
+
+        <div className='border-1 rounded-lg border-white p-2' onClick={handleTooTough}>
+          <p>Too tough</p>
         </div>
       </div>
     </div>
