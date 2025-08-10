@@ -3,7 +3,7 @@ import {useDeeplink} from '@shopify/shop-minis-react'
 
 // Import all page components
 import {Landing} from './components/Landing'
-import {Whiteboard} from './components/Whiteboard'
+import {Whiteboard} from './components/Whiteboard/Whiteboard'
 import {Submission} from './components/Submission'
 import {Judging} from './components/Judging'
 import {Results} from './components/Results'
