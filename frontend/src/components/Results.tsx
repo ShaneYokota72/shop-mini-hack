@@ -1,10 +1,15 @@
 import React from 'react'
+import { useNavigateWithTransition, Button } from '@shopify/shop-minis-react'
 
-interface ResultsProps {
-  navigate?: (path: string | number) => void
-}
+const DATA_NAVIGATION_TYPE_ATTRIBUTE = 'data-navigation-type';
+const NAVIGATION_TYPES = {
+  forward: 'forward',
+  backward: 'backward'
+} as const;
 
-export function Results({ navigate }: ResultsProps) {
+export function Results() {
+  const navigate = useNavigateWithTransition()
+  
   // Simulate results
   const results = {
     overallScore: 87,
@@ -21,15 +26,13 @@ export function Results({ navigate }: ResultsProps) {
   }
 
   const handleStartNew = () => {
-    if (navigate) {
-      navigate('/')
-    }
+    document.documentElement.setAttribute('data-navigation-type', 'forward');
+    navigate('/');
   }
 
   const handleGoBack = () => {
-    if (navigate) {
-      navigate(-1)
-    }
+    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.backward);
+    navigate(-1);
   }
 
   const getScoreColor = (score: number) => {
@@ -43,32 +46,25 @@ export function Results({ navigate }: ResultsProps) {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 pt-12 px-4 pb-6">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
-          <button 
-            onClick={handleGoBack}
-            className="mb-4 text-gray-600 hover:text-gray-800"
-          >
+          <Button onClick={handleGoBack}>
             ← Back
-          </button>
+          </Button>
           <h1 className="text-3xl font-bold mb-2 text-gray-800">
-            🎉 Challenge Results
+            🏆 Challenge Results
           </h1>
           <p className="text-gray-600">
-            Congratulations! Here are your final results from the judging panel.
+            See how you performed in the creative challenge
           </p>
         </div>
 
         <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
           <div className="text-center mb-8">
-            <div className="text-8xl mb-4">🏆</div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">{results.rank}</h2>
-            <p className="text-gray-600">Category: {results.category}</p>
-          </div>
-
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-green-400 to-blue-500 rounded-full text-white text-2xl font-bold mb-4">
-              {results.overallScore}
+            <div className="text-6xl mb-4">{results.rank.split(' ')[1]}</div>
+            <h2 className="text-3xl font-bold mb-2 text-gray-800">{results.rank.split(' ')[0]} Medal!</h2>
+            <p className="text-xl text-gray-600 mb-4">Overall Score: <span className="font-bold text-blue-600">{results.overallScore}/100</span></p>
+            <div className="inline-block bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-medium">
+              {results.category}
             </div>
-            <p className="text-lg font-semibold text-gray-700">Overall Score</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -106,17 +102,14 @@ export function Results({ navigate }: ResultsProps) {
         </div>
 
         <div className="flex space-x-4">
-          <button 
-            onClick={handleStartNew}
-            className="flex-1 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300"
-          >
+          <Button onClick={handleStartNew}>
             Start New Challenge 🚀
-          </button>
+          </Button>
         </div>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500">
-            Thank you for participating! Share your results with friends and try another challenge.
+          <p className="text-gray-600">
+            🎉 Congratulations on completing the challenge!
           </p>
         </div>
       </div>

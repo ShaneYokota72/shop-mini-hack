@@ -1,11 +1,13 @@
 import React, {useState} from 'react'
 import { DragEndEvent } from '@dnd-kit/core'
 import { WhiteboardCanvas, WhiteboardItem } from './WhiteboardCanvas'
-import { useProductSearch } from '@shopify/shop-minis-react'
+import { useProductSearch, useNavigateWithTransition, Button } from '@shopify/shop-minis-react'
 
-interface WhiteboardProps {
-  navigate?: (path: string | number) => void
-}
+const DATA_NAVIGATION_TYPE_ATTRIBUTE = 'data-navigation-type';
+const NAVIGATION_TYPES = {
+  forward: 'forward',
+  backward: 'backward'
+} as const;
 
 interface SearchImage {
   id: string
@@ -23,7 +25,8 @@ const dummyImages: SearchImage[] = [
   { id: '6', url: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=150&h=150&fit=crop', alt: 'Denim jeans' },
 ]
 
-export function Whiteboard({ navigate }: WhiteboardProps) {
+export function Whiteboard() {
+  const navigate = useNavigateWithTransition()
   const [items, setItems] = useState<WhiteboardItem[]>([])
   const [showAddPanel, setShowAddPanel] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -37,15 +40,101 @@ export function Whiteboard({ navigate }: WhiteboardProps) {
   })
 
   const handleGoBack = () => {
-    if (navigate) {
-      navigate(-1)
+    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.backward);
+    navigate(-1);
+  }
+
+  // Alternative canvas capture method using native Canvas API
+  const captureCanvasAlternative = async (): Promise<string> => {
+    const canvasElement = document.querySelector('[data-whiteboard-canvas]') as HTMLElement
+    if (!canvasElement) return ''
+
+    try {
+      // Create a new canvas
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return ''
+
+      // Set canvas size
+      canvas.width = 500
+      canvas.height = 400
+
+      // Fill white background
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      // Get all images in the whiteboard
+      const images = canvasElement.querySelectorAll('img')
+      
+      return new Promise<string>((resolve) => {
+        let loadedImages = 0
+        const totalImages = images.length
+
+        if (totalImages === 0) {
+          resolve(canvas.toDataURL('image/png'))
+          return
+        }
+
+        images.forEach((img, index) => {
+          const newImg = new Image()
+          newImg.crossOrigin = 'anonymous'
+          
+          newImg.onload = () => {
+            // Get the position from the parent div
+            const parent = img.closest('[style*="position"]') as HTMLElement
+            if (parent) {
+              const style = parent.style
+              const x = parseInt(style.left) || 0
+              const y = parseInt(style.top) || 0
+              const width = parseInt(style.width) || 100
+              const height = parseInt(style.height) || 100
+              
+              ctx.drawImage(newImg, x, y, width, height)
+            }
+            
+            loadedImages++
+            if (loadedImages === totalImages) {
+              resolve(canvas.toDataURL('image/png'))
+            }
+          }
+          
+          newImg.onerror = () => {
+            loadedImages++
+            if (loadedImages === totalImages) {
+              resolve(canvas.toDataURL('image/png'))
+            }
+          }
+          
+          newImg.src = img.src
+        })
+      })
+    } catch (error) {
+      console.error('Alternative canvas capture failed:', error)
+      return ''
     }
   }
 
-  const handleNext = () => {
-    if (navigate) {
-      navigate('/submission')
+  const handleNext = async () => {
+    console.log('Starting canvas capture...')
+    const canvasImage = await captureCanvasAlternative()
+    
+    console.log('Canvas image captured:', !!canvasImage)
+    console.log('Image length:', canvasImage.length)
+    
+    // Store image in sessionStorage to pass to next page
+    if (canvasImage) {
+      try {
+        sessionStorage.setItem('canvasImage', canvasImage)
+        console.log('Image stored in sessionStorage')
+      } catch (error) {
+        console.error('Failed to store image in sessionStorage:', error)
+      }
+    } else {
+      console.error('No canvas image to store')
     }
+    
+    document.documentElement.setAttribute('data-navigation-type', 'forward');
+    navigate('/submission');
   }
 
   const handleSearchSubmit = () => {
@@ -122,12 +211,9 @@ export function Whiteboard({ navigate }: WhiteboardProps) {
     <div className="min-h-screen bg-black flex flex-col">
       {/* Header */}
       <div className="bg-black shadow-sm p-4">
-        <button 
-          onClick={handleGoBack}
-          className="mb-3 text-gray-400 hover:text-white text-sm transition-colors"
-        >
+        <Button onClick={handleGoBack}>
           ← Back
-        </button>
+        </Button>
         <h1 className="text-xl font-medium text-white text-center">
           Make your concert outfit
         </h1>
@@ -176,12 +262,9 @@ export function Whiteboard({ navigate }: WhiteboardProps) {
             +
           </button>
 
-          <button
-            onClick={handleNext}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full font-medium transition-all hover:scale-105 active:scale-95 shadow-lg"
-          >
+          <Button onClick={handleNext}>
             Next
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -194,19 +277,13 @@ export function Whiteboard({ navigate }: WhiteboardProps) {
           >
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
-              <button
-                onClick={() => setShowAddPanel(false)}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
+              <Button onClick={() => setShowAddPanel(false)}>
                 Close
-              </button>
+              </Button>
               <h3 className="font-medium text-white">Add Items</h3>
-              <button
-                onClick={() => setShowAddPanel(false)}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full text-sm transition-colors"
-              >
+              <Button onClick={() => setShowAddPanel(false)}>
                 Next
-              </button>
+              </Button>
             </div>
 
             {/* Search Input */}

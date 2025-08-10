@@ -1,15 +1,20 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Button } from '@shopify/shop-minis-react'
 
-interface LandingProps {
-  navigate?: (path: string) => void
-}
+const DATA_NAVIGATION_TYPE_ATTRIBUTE = 'data-navigation-type';
+const NAVIGATION_TYPES = {
+  forward: 'forward',
+  backward: 'backward'
+} as const;
 
-export function Landing({ navigate }: LandingProps) {
+export function Landing() {
+  const navigate = useNavigate()
+
   const handleStartChallenge = () => {
     console.log('Start challenge clicked')
-    if (navigate) {
-      navigate('/whiteboard')
-    }
+    document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+    navigate('/whiteboard');
   }
 
   return (
@@ -46,12 +51,9 @@ export function Landing({ navigate }: LandingProps) {
           </div>
         </div>
 
-        <button 
-          onClick={handleStartChallenge}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-        >
+        <Button onClick={handleStartChallenge}>
           Start Challenge 🚀
-        </button>
+        </Button>
       </div>
     </div>
   )
