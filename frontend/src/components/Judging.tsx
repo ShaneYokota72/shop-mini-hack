@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
 import JudgeCard from "./JudgeCard"
+import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
+
 
 interface JudgingProps {
   navigate?: (path: string | number) => void
