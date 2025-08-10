@@ -61,7 +61,7 @@ export function Submission() {
       const storedProductIds = sessionStorage.getItem('productIds')
       const productIds = storedProductIds ? JSON.parse(storedProductIds) : []
 
-      const response = await fetch('http://localhost:8080/api/submit', {
+      const response = await fetch('https://shop-mini-hack-tau.vercel.app/api/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

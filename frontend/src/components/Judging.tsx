@@ -32,7 +32,7 @@ export function Judging() {
   const [selectedCard, setSelectedCard] = useState<number | null>(null)
 
   const getJudgeItems = async () => {
-    const response = await fetch('http://localhost:8080/api/getTwoLeastRecentlyUsed')
+    const response = await fetch('https://shop-mini-hack-tau.vercel.app/api/getTwoLeastRecentlyUsed')
     const data = await response.json()
     return data.data
   }
@@ -45,7 +45,7 @@ export function Judging() {
     await new Promise(resolve => setTimeout(resolve, 800))
 
     // Send judge api call
-    await fetch('http://localhost:8080/api/vote', {
+    await fetch('https://shop-mini-hack-tau.vercel.app/api/vote', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -167,7 +167,7 @@ export function Judging() {
               : 'hover:bg-[#4E4E4E] active:scale-95'
           }`}
         >
-          Too tough to choose
+          Too tough
         </button>
       </div>
     </div>

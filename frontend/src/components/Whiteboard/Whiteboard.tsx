@@ -145,7 +145,7 @@ export function Whiteboard() {
   // Separate async function for AI generation
   const generateAIImage = async (canvasImage: string) => {
     try {
-      const response = await fetch('http://localhost:8080/api/img2img', {
+      const response = await fetch('https://shop-mini-hack-tau.vercel.app/api/img2img', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -18,7 +18,7 @@ export default function Winner() {
         setLoading(true)
         setError(null)
         
-        const response = await fetch('http://localhost:8080/api/getWinners')
+        const response = await fetch('https://shop-mini-hack-tau.vercel.app/api/getWinners')
         console.log('Response status:', response.status)
         console.log('Response ok:', response.ok)
         
@@ -57,7 +57,7 @@ export default function Winner() {
   },[])
 
   const handleNextWinner = () => {
-    if(winnerInView >= 2) {
+    if(winnerInView >= 3) {
       document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
       navigation('/results')
       return
