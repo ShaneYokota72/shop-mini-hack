@@ -1,8 +1,19 @@
-import React from 'react'
+import {ArrowRight} from 'lucide-react'
 
 interface LandingProps {
   navigate?: (path: string) => void
 }
+
+const IMAGES_PATH = [
+  'https://cdn.shopify.com/s/files/1/0582/1648/0813/products/burrata_hat.jpg?v=1725129175&width=2048',
+  'https://cdn.shopify.com/s/files/1/0810/2618/7562/files/3792625715044681494_2048_custom.jpg?v=1749577471&width=2048',
+  'https://cdn.shopify.com/s/files/1/1456/8506/files/30g-OrganicSuperior-Front.jpg?v=1700488938&width=2048',
+  'https://cdn.shopify.com/s/files/1/0522/6912/1736/files/W206040-130_Classic-4Drawer-Dresser_Bianca-White_Lifestyle_01_1.jpg?v=1751319674&width=2048',
+  'https://cdn.shopify.com/s/files/1/0459/0744/3880/files/summer_pearl_necklace.jpg?v=1694698436&width=2048',
+  'https://cdn.shopify.com/s/files/1/0762/6571/8069/files/stancebedroombrighter_1.png?v=1735613145&format=webp&width=2048',
+  'https://cdn.shopify.com/s/files/1/0023/0021/5405/files/BrooklynCandleStudio-Santorini-Vertical-Resized.jpg?v=1701983506&width=2048',
+  'https://cdn.shopify.com/s/files/1/2037/3509/files/818eb6ffe674d7308b378058171fe14b0f4964760c4c43bf28cc2e76353848e1.jpg?v=1754586715&width=2048',
+]
 
 export function Landing({ navigate }: LandingProps) {
   const handleStartChallenge = () => {
@@ -13,45 +24,42 @@ export function Landing({ navigate }: LandingProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pt-12 px-4 pb-6">
+    <div className="min-h-screen bg-gradient-to-br bg-[#0D0D0D] pt-12 pb-6">
       <div className="max-w-md mx-auto text-center">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4 text-gray-800">
-            🎨 Creative Challenge
-          </h1>
-          <p className="text-lg text-gray-600 mb-6">
-            Welcome to the ultimate creative challenge! Show off your skills through our interactive flow.
-          </p>
-        </div>
+        <div className='absolute z-0 inset-0'>
+          {
+            IMAGES_PATH.map((image, index) => {
+              const row = Math.floor(index / 2)
+              const col = index % 2
 
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4 text-gray-700">Challenge Flow</h2>
-          <div className="space-y-3 text-left">
-            <div className="flex items-center space-x-3">
-              <span className="w-6 h-6 bg-blue-500 text-white rounded-full text-sm flex items-center justify-center">1</span>
-              <span className="text-gray-600">Whiteboard your ideas</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <span className="w-6 h-6 bg-gray-300 text-white rounded-full text-sm flex items-center justify-center">2</span>
-              <span className="text-gray-600">Submit your creation</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <span className="w-6 h-6 bg-gray-300 text-white rounded-full text-sm flex items-center justify-center">3</span>
-              <span className="text-gray-600">Judging phase</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <span className="w-6 h-6 bg-gray-300 text-white rounded-full text-sm flex items-center justify-center">4</span>
-              <span className="text-gray-600">See results</span>
-            </div>
-          </div>
-        </div>
+              const baseTop = 5 + row * 24
+              const baseLeft = 12 + col * 52
 
-        <button 
-          onClick={handleStartChallenge}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-        >
-          Start Challenge 🚀
-        </button>
+              const offset = () => (Math.random() - 0.5) * 12
+              const top = baseTop + offset()
+              const left = baseLeft + offset()
+              
+              return (
+                <img 
+                  key={index} 
+                  src={image} 
+                  alt={image} 
+                  className={"absolute w-24 h-24 object-cover rounded-lg shadow-lg transform transition-transform hover:scale-110 animate-slide-" + (index % 3 + 1)}
+                  style={{ top: `${top}%`, left: `${left}%` }}
+                />
+              )
+            })
+          }
+        </div>
+        <div className='absolute z-30 top-0 h-full w-full bg-black opacity-30'/>
+        <div className='absolute z-50 text-white top-48 flex flex-col items-center justify-center gap-12'>
+          <p className='text-8xl text-[#E4E3DD] drop-shadow-xl/80 drop-shadow-black'>TREND OFF</p>
+          <p className='text-lg top-36 text-[#d6cfcf] drop-shadow-xl drop-shadow-black'>Build the best outfit for $50</p>
+          <ArrowRight 
+            className="bg-purple-600 rounded-full p-2 w-12 h-12 transition-transform transform hover:scale-110"
+            onClick={handleStartChallenge}
+          />
+        </div>
       </div>
     </div>
   )

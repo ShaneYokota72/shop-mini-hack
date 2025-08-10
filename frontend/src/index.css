@@ -1,1 +1,31 @@
 @import "@shopify/shop-minis-react/styles";
+
+@keyframes slideRight {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(100vw + 96px));
+  }
+}
+
+@keyframes slideRightReturn {
+  0% {
+    transform: translateX(calc(-100vw - 96px));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-1 {
+  animation: slideRight 8s linear infinite, slideRightReturn 4s linear infinite 10s;
+}
+
+.animate-slide-2 {
+  animation: slideRight 10s linear infinite, slideRightReturn 6s linear infinite 12s;
+}
+
+.animate-slide-3 {
+  animation: slideRight 6s linear infinite, slideRightReturn 2s linear infinite 8s;
+}
