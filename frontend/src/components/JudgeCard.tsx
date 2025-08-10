@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export default function JudgeCard({
     title,
@@ -13,6 +13,11 @@ export default function JudgeCard({
 }) {
   const [isSelected, setIsSelected] = useState(false)
   const [finishedSelection, setFinishedSelection] = useState(false)
+
+  useEffect(() => {
+    setIsSelected(false)
+    setFinishedSelection(false)
+  },[])
 
   const handleClick = () => {
     setFinishedSelection(true)
