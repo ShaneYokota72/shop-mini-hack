@@ -12,6 +12,7 @@ import {
   useDraggable,
 } from '@dnd-kit/core'
 import {CSS} from '@dnd-kit/utilities'
+import classNames from 'classnames'
 
 export interface WhiteboardItem {
   id: string
@@ -29,7 +30,7 @@ interface WhiteboardCanvasProps {
   onItemSelect: (itemId: string) => void
 }
 
-// Draggable Item Component
+// Simplified Draggable Item Component
 function DraggableItem({
   item,
   selected,
@@ -49,6 +50,7 @@ function DraggableItem({
     id: item.id,
   })
 
+  // Use CSS transform for drag offset, but keep absolute positioning for base position
   const style = {
     position: 'absolute' as const,
     left: item.x,
@@ -56,8 +58,8 @@ function DraggableItem({
     width: item.width,
     height: item.height,
     transform: CSS.Translate.toString(transform),
-    zIndex: isDragging ? 50 : 1,
-    touchAction: 'none',
+    zIndex: isDragging ? 50 : selected ? 10 : 1,
+    transition: isDragging ? 'none' : 'all 200ms ease',
   }
 
   return (
@@ -67,19 +69,23 @@ function DraggableItem({
       {...listeners}
       {...attributes}
       onClick={() => onSelect(item.id)}
-      className={`cursor-grab active:cursor-grabbing rounded-lg border-2 transition-all ${
-        isDragging
-          ? 'border-blue-500 shadow-2xl scale-105'
-          : selected
-            ? 'border-purple-500 ring-2 ring-purple-300 shadow-lg'
-            : 'border-gray-300 hover:border-blue-400 hover:shadow-lg'
-      }`}
+      className={classNames(
+        'cursor-grab active:cursor-grabbing rounded-lg border-2 overflow-hidden bg-white',
+        {
+          'border-blue-500 shadow-2xl scale-105': isDragging,
+          'border-purple-500 ring-2 ring-purple-300 shadow-lg': selected && !isDragging,
+          'border-gray-300 hover:border-blue-400 hover:shadow-lg': !selected && !isDragging,
+        }
+      )}
     >
       <img
         src={item.imageUrl}
         alt="Outfit item"
-        className="w-full h-full object-cover rounded-lg pointer-events-none"
+        className="w-full h-full object-cover pointer-events-none"
         draggable={false}
+        style={{
+          borderRadius: '6px',
+        }}
       />
     </div>
   )

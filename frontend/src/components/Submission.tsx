@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useCurrentUser } from '@shopify/shop-minis-react'
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 
-interface SubmissionProps {
-  navigate?: (path: string | number) => void
-}
-
-export function Submission({ navigate }: SubmissionProps) {
+export function Submission() {
   const [title, setTitle] = useState('')
   const [canvasImage, setCanvasImage] = useState<string>('')
   const [showPreview, setShowPreview] = useState(false)

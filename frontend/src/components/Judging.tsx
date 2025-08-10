@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import JudgeCard from "./JudgeCard"
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
-
 
 interface JudgingProps {
   navigate?: (path: string | number) => void
@@ -20,10 +19,14 @@ type JudgingItem = {
 export function Judging({ navigate }: JudgingProps) {
   const [judgedCount, setJudgedCount] = useState(1)
   const [judgeItems, setJudgeItems] = useState<JudgingItem[]>([])
+  const navigation = useNavigateWithTransition()
 
   const handleGoBack = () => {
     if (navigate) {
       navigate(-1)
+    } else {
+      document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.backward);
+      navigation(-1)
     }
   }
 
@@ -50,6 +53,9 @@ export function Judging({ navigate }: JudgingProps) {
     if (judgedCount >= 3) {
       if (navigate) {
         navigate('/results')
+      } else {
+        document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+        navigation('/results')
       }
       return
     }
@@ -66,6 +72,9 @@ export function Judging({ navigate }: JudgingProps) {
     if(judgedCount >= 2) {
       if (navigate) {
         navigate('/results')
+      } else {
+        document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+        navigation('/results')
       }
       return
     }
