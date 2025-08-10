@@ -9,13 +9,30 @@ const supabase = createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
+// CORS headers
+const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
+
+export async function OPTIONS(request: NextRequest) {
+    return new Response(null, {
+        status: 200,
+        headers: corsHeaders,
+    })
+}
+
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const { uid, img, title } = body;
 
         if (!uid || !img) {
-            return NextResponse.json({ error: 'uid and img are required' }, { status: 400 });
+            return NextResponse.json({ error: 'uid and img are required' }, { 
+                status: 400,
+                headers: corsHeaders 
+            });
         }
 
         const { data, error } = await supabase
@@ -33,9 +50,14 @@ export async function POST(req: NextRequest) {
             throw new Error(error.message);
         }
 
-        return NextResponse.json({ success: true, data });
+        return NextResponse.json({ success: true, data }, {
+            headers: corsHeaders
+        });
     } catch (error) {
         console.log('error:', error);
-        return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
+        return NextResponse.json({ error: 'Invalid request data' }, { 
+            status: 400,
+            headers: corsHeaders 
+        });
     }
 } 

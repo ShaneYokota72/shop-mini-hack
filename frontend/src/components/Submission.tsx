@@ -8,6 +8,8 @@ export function Submission({ navigate }: SubmissionProps) {
   const [title, setTitle] = useState('')
   const [canvasImage, setCanvasImage] = useState<string>('')
   const [showPreview, setShowPreview] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   useEffect(() => {
     console.log('Submission component mounted')
@@ -20,8 +22,6 @@ export function Submission({ navigate }: SubmissionProps) {
     if (storedImage) {
       setCanvasImage(storedImage)
       console.log('Canvas image set in state')
-      // Don't clean up immediately for debugging
-      // sessionStorage.removeItem('canvasImage')
     } else {
       console.error('No image found in sessionStorage')
     }
@@ -39,9 +39,54 @@ export function Submission({ navigate }: SubmissionProps) {
     }
   }
 
-  const handleFinalSubmit = () => {
-    if (navigate) {
-      navigate('/judging')
+  // Generate a proper UUID v4
+  const generateUUID = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  const handleFinalSubmit = async () => {
+    if (!title.trim() || !canvasImage) return
+
+    setIsSubmitting(true)
+    setSubmitError(null)
+
+    try {
+      const response = await fetch('http://localhost:8080/api/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uid: generateUUID(),
+          img: canvasImage,
+          title: title.trim()
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Submission failed')
+      }
+
+      const result = await response.json()
+      console.log('Submission successful:', result)
+
+      // Clean up stored image after successful submission
+      sessionStorage.removeItem('canvasImage')
+
+      // Navigate to judging page
+      if (navigate) {
+        navigate('/judging')
+      }
+    } catch (error) {
+      console.error('Submission error:', error)
+      setSubmitError(error instanceof Error ? error.message : 'Failed to submit. Please try again.')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -55,6 +100,7 @@ export function Submission({ navigate }: SubmissionProps) {
           <button 
             onClick={() => setShowPreview(false)}
             className="mb-3 text-gray-400 hover:text-white text-sm transition-colors"
+            disabled={isSubmitting}
           >
             ← Back to Edit
           </button>
@@ -84,18 +130,43 @@ export function Submission({ navigate }: SubmissionProps) {
               </p>
             </div>
 
+            {/* Error Message */}
+            {submitError && (
+              <div className="bg-red-900 border border-red-700 rounded-lg p-4 mb-6">
+                <p className="text-red-300 text-sm">
+                  ❌ {submitError}
+                </p>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-4">
               <button 
                 onClick={() => setShowPreview(false)}
                 className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300"
+                disabled={isSubmitting}
               >
                 Edit
               </button>
               <button 
                 onClick={handleFinalSubmit}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300"
+                disabled={isSubmitting}
+                className={`font-medium py-3 px-4 rounded-lg transition-all duration-300 ${
+                  isSubmitting
+                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white'
+                }`}
               >
-                Submit 🚀
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Submitting...
+                  </span>
+                ) : (
+                  'Submit 🚀'
+                )}
               </button>
             </div>
           </div>
