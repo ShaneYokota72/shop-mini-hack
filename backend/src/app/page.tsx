@@ -157,6 +157,11 @@ function VotingComponent() {
             </div>
             
             <div className="mt-8 space-y-2">
+              {canvasA.title && (
+                <p className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                  {canvasA.title}
+                </p>
+              )}
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <strong>ID:</strong> {canvasA.id}
               </p>
@@ -193,6 +198,11 @@ function VotingComponent() {
             </div>
             
             <div className="mt-8 space-y-2">
+              {canvasB.title && (
+                <p className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                  {canvasB.title}
+                </p>
+              )}
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <strong>ID:</strong> {canvasB.id}
               </p>
@@ -317,6 +327,11 @@ function GetTwoLeastRecentlyUsedComponent() {
               ELO: {item.elo || 1000}
             </div>
             <div className="space-y-2 mt-12">
+              {item.title && (
+                <p className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                  {item.title}
+                </p>
+              )}
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <strong>ID:</strong> {item.id}
               </p>
@@ -455,6 +470,11 @@ function ListAllComponent() {
               ELO: {item.elo || 1000}
             </div>
             <div className="space-y-2 mt-8">
+              {item.title && (
+                <p className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                  {item.title}
+                </p>
+              )}
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <strong>ID:</strong> {item.id}
               </p>
@@ -487,6 +507,7 @@ function ListAllComponent() {
 function SubmitTestComponent() {
   const [uid, setUid] = useState("");
   const [img, setImg] = useState("");
+  const [title, setTitle] = useState("");
   const [response, setResponse] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
@@ -529,7 +550,7 @@ function SubmitTestComponent() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ uid, img }),
+        body: JSON.stringify({ uid, img, title }),
       });
 
       const data = await res.json();
@@ -564,6 +585,17 @@ function SubmitTestComponent() {
               Generate UUID
             </button>
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Title:</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter canvas title (optional)"
+            className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600"
+          />
         </div>
 
         <div>

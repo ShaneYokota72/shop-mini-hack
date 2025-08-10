@@ -12,7 +12,7 @@ const supabase = createClient<Database>(
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { uid, img } = body;
+        const { uid, img, title } = body;
 
         if (!uid || !img) {
             return NextResponse.json({ error: 'uid and img are required' }, { status: 400 });
@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
             .insert({
                 uid: uid,
                 img: img,
+                title: title || null,
                 elo: 1000,
                 updatedAt: new Date().toISOString()
             })
