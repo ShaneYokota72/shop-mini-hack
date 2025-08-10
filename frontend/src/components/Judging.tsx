@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import JudgeCard from "./JudgeCard"
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
-
 
 interface JudgingProps {
   navigate?: (path: string | number) => void
@@ -21,10 +20,14 @@ export function Judging({ navigate }: JudgingProps) {
   const navigation = useNavigateWithTransition()
   const [judgedCount, setJudgedCount] = useState<number>(1)
   const [judgeItems, setJudgeItems] = useState<JudgingItem[]>([])
+  const navigation = useNavigateWithTransition()
 
   const handleGoBack = () => {
     if (navigate) {
       navigate(-1)
+    } else {
+      document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.backward);
+      navigation(-1)
     }
   }
 
