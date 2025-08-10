@@ -26,60 +26,91 @@ export async function OPTIONS(request: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { uid, img, title, displayName } = body;
+        const { uid, img, title, displayName, transformedImage } = body;
 
-        if (!img) {
-            return NextResponse.json({ error: 'img is required' }, { 
+        if (!img && !transformedImage) {
+            return NextResponse.json({ error: 'Either img or transformedImage is required' }, { 
                 status: 400,
                 headers: corsHeaders 
             });
         }
 
-        // Log the displayName for debugging but don't store it in the Canvas table
+        // Log the displayName and transformedImage for debugging
         console.log('Submission from user:', displayName);
+        console.log('Has transformed image:', !!transformedImage);
 
-        // Prepare the insert data - only include fields that exist in the Canvas table
-        const insertData: any = {
-            img: img,
-            title: title || null,
+        // Generate UID if not provided or invalid
+        let finalUid = uid;
+        if (!uid || !uid.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+            finalUid = crypto.randomUUID();
+        }
+
+        // Check if record with this UID already exists
+        const { data: existingRecord } = await supabase
+            .from('Canvas')
+            .select('*')
+            .eq('uid', finalUid)
+            .single();
+
+        // Prepare the data for insert/update
+        const recordData: any = {
+            uid: finalUid,
             elo: 1000,
             updatedAt: new Date().toISOString(),
             display_name: displayName || null
         };
 
-        // Only include uid if it looks like a valid UUID, otherwise let DB auto-generate
-        if (uid && uid.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
-            insertData.uid = uid;
+        // Add img if provided
+        if (img) {
+            recordData.img = img;
         }
 
-        console.log('Inserting data:', insertData);
-
-        const { data, error } = await supabase
-            .from('Canvas')
-            .insert(insertData)
-            .select()
-
-        if (error) {
-            console.error('Supabase error:', error);
-            return NextResponse.json({ 
-                error: `Database error: ${error.message}` 
-            }, { 
-                status: 400,
-                headers: corsHeaders 
-            });
+        // Add title if provided
+        if (title) {
+            recordData.title = title;
         }
 
-        console.log('Insert successful:', data);
-        return NextResponse.json({ success: true, data }, {
+        // Add transformed image if provided
+        if (transformedImage) {
+            recordData.generated_image = transformedImage;
+        }
+
+        let result;
+
+        if (existingRecord) {
+            // Update existing record
+            console.log('Updating existing record with ID:', existingRecord.id);
+            const { data, error } = await supabase
+                .from('Canvas')
+                .update(recordData)
+                .eq('id', existingRecord.id)
+                .select();
+
+            if (error) throw error;
+            result = data;
+        } else {
+            // Insert new record
+            console.log('Inserting new record with UID:', finalUid);
+            const { data, error } = await supabase
+                .from('Canvas')
+                .insert(recordData)
+                .select();
+
+            if (error) throw error;
+            result = data;
+        }
+
+        console.log('Operation successful:', result);
+        return NextResponse.json({ success: true, data: result }, {
             headers: corsHeaders
         });
     } catch (error) {
         console.error('API error:', error);
         return NextResponse.json({ 
-            error: 'Invalid request data' 
+            error: `Database error: ${error instanceof Error ? error.message : 'Unknown error'}` 
         }, { 
             status: 400,
             headers: corsHeaders 
         });
     }
-} 
+}
