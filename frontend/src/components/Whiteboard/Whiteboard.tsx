@@ -205,17 +205,17 @@ export function Whiteboard() {
   return (
     <div className="min-h-screen bg-black flex flex-col">
       {/* Header */}
-      <div className="bg-black shadow-sm p-4">
+      {/* <div className="bg-black shadow-sm p-4">
         <button 
           onClick={handleGoBack}
           className="text-gray-400 hover:text-white text-sm transition-colors"
         >
           ←
         </button>
-        <h1 className="text-xl font-medium text-white text-center">
-          Make your concert outfit
-        </h1>
-      </div>
+      </div> */}
+      <h1 className="text-2xl font-bold text-white text-center">
+        Make the best outfit for the concert! 🎤
+      </h1>
 
       {/* Whiteboard Canvas */}
       <WhiteboardCanvas
@@ -227,7 +227,7 @@ export function Whiteboard() {
 
       {/* Delete Button - Only shows when item is selected, positioned absolutely */}
       {selectedItemId && (
-        <div className="absolute left-1/2 transform -translate-x-1/2 z-20" style={{ bottom: '100px' }}>
+        <div className="absolute left-1/2 transform -translate-x-1/2 z-20" style={{ bottom: '140px' }}>
           <button
             onClick={handleDeleteSelected}
             className="bg-red-600 hover:bg-red-700 text-white w-12 h-12 rounded-full font-medium transition-all hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center"
@@ -251,18 +251,23 @@ export function Whiteboard() {
       )}
 
       {/* Bottom Toolbar */}
-      <div className="bg-black border-t border-gray-800 p-4">
+      <div className="bg-black border-t border-gray-800 pb-8">
         <div className="flex items-center justify-center space-x-4">
           <button
+            onClick={handleGoBack}
+            className="text-white bg-[#3E3E3E] rounded-full py-2 px-4"
+          >
+            Close
+          </button>
+          <div
             onClick={() => setShowAddPanel(true)}
-            className="w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center text-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg"
+            className="w-12 h-12 bg-white text-black rounded-full text-4xl flex items-center justify-center"
           >
             +
-          </button>
-
-          <button 
+          </div>
+          <button
             onClick={handleNext}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95"
+            className="text-white bg-[#5433EB] rounded-full py-2 px-4"
           >
             Next
           </button>

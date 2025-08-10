@@ -52,9 +52,9 @@ export function Landing() {
         <div className='absolute z-30 top-0 h-full w-full bg-black opacity-30'/>
         <div className='absolute z-50 text-white top-48 flex flex-col items-center justify-center gap-12'>
           <p className='text-8xl text-[#E4E3DD] drop-shadow-xl/80 drop-shadow-black'>TREND OFF</p>
-          <p className='text-lg top-36 text-[#d6cfcf] drop-shadow-xl drop-shadow-black'>Build the best outfit for $50</p>
+          <p className='text-lg top-36 text-[#d6cfcf] drop-shadow-xl drop-shadow-black'>Make the best outfit for the concert! 🎤</p>
           <ArrowRight 
-            className="bg-purple-600 rounded-full p-2 w-12 h-12 transition-transform transform hover:scale-110"
+            className="bg-[#5433EB] rounded-full p-2 w-12 h-12 transition-transform transform hover:scale-110"
             onClick={handleStartChallenge}
           />
         </div>
