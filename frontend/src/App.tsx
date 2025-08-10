@@ -20,11 +20,9 @@ export function App() {
       <Route path="/loading" element={<Loading />} />
       <Route path="/submission" element={<Submission />} />
       <Route path="/results" element={<Results />} />
+      <Route path="/winners" element={<Winner />} />
       <Route path="/calendar/:friendId" element={<Calendar />} />
       <Route path="/calendar-preview/:friendId" element={<CalendarPreview />} />
-      <Route path="/winners-1" element={<Winner />} />
-      <Route path="/winners-2" element={<Winner />} />
-      <Route path="/winners-3" element={<Winner />} />
     </Routes>
   )
 }

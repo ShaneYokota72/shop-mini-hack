@@ -27,7 +27,9 @@ export async function GET(req: NextRequest) {
         const { data, error } = await supabase
             .from('Canvas')
             .select('*')
-            .limit(1);
+            .order('elo', { ascending: false })
+            .limit(3);
+
         if (error) {
             throw new Error(error.message);
         }
