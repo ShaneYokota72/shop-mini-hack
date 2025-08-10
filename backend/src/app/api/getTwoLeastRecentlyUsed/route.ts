@@ -9,6 +9,20 @@ const supabase = createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
+// CORS headers
+const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
+
+export async function OPTIONS(request: NextRequest) {
+    return new Response(null, {
+        status: 200,
+        headers: corsHeaders,
+    })
+}
+
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
@@ -33,9 +47,11 @@ export async function GET(req: NextRequest) {
             throw new Error(error.message);
         }
         
-        return NextResponse.json(data);
+        return NextResponse.json({data}, {
+            headers: corsHeaders
+        });
     } catch (error) {
         console.log('error:', error);
-        return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
+        return NextResponse.json({ error: 'Invalid request data' }, { status: 400, headers: corsHeaders });
     }
 } 
