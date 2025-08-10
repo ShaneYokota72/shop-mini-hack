@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import JudgeCard from "./JudgeCard"
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 
@@ -37,10 +37,19 @@ export function Judging() {
       })
     })
 
-    // if 3 items judged, navigate to results
+    // if 3 items judged, check AI generation status
     if (judgedCount >= 3) {
-      document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
-      navigation('/results')
+      const generationStatus = sessionStorage.getItem('generationStatus')
+      
+      if (generationStatus === 'complete') {
+        // AI is ready, go directly to submission
+        document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+        navigation('/submission')
+      } else {
+        // AI still processing, go to loading page
+        document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
+        navigation('/loading')
+      }
       return
     }
 
@@ -95,4 +104,4 @@ export function Judging() {
       </div>
     </div>
   )
-} 
+}

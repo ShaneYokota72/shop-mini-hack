@@ -79,12 +79,14 @@ export function Submission() {
       const result = await response.json()
       console.log('Submission successful:', result)
 
-      // Clean up stored image after successful submission
+      // Clean up stored images after successful submission
       sessionStorage.removeItem('canvasImage')
+      sessionStorage.removeItem('genImage')
+      sessionStorage.removeItem('generationStatus')
 
-      // Navigate to judging page
+      // Navigate directly to results page (skip judging since it's already done)
       document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
-      navigation('/judging')
+      navigation('/results')
     } catch (error) {
       console.error('Submission error:', error)
       setSubmitError(error instanceof Error ? error.message : 'Failed to submit. Please try again.')
@@ -171,4 +173,4 @@ export function Submission() {
       </div>
     </div>
   )
-} 
+}
