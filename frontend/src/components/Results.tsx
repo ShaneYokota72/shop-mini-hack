@@ -1,10 +1,8 @@
 import { useContext, useEffect, useState } from 'react'
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE, Button} from '@shopify/shop-minis-react'
 import { Trophy, User } from 'lucide-react'
-import ReactSimplyCarousel from 'react-simply-carousel';
 import { TrendOffContext } from '../context/TrendOffContext';
 import useEmblaCarousel from 'embla-carousel-react'
-import { EmblaCarouselType } from 'embla-carousel';
 import { NextButton, PrevButton, usePrevNextButtons } from './EmberCarouselButton';
 interface Fact {
   emoji: string;
@@ -20,14 +18,6 @@ export function Results() {
   const navigation = useNavigateWithTransition()
   const [facts, setFacts] = useState<Fact[]>([]);
   const { user } = useContext(TrendOffContext);
-
-  // const scrollPrev = useCallback(() => {
-  //   if (emblaApi) emblaApi.scrollPrev()
-  // }, [emblaApi])
-
-  // const scrollNext = useCallback(() => {
-  //   if (emblaApi) emblaApi.scrollNext()
-  // }, [emblaApi])
 
   const {
     prevBtnDisabled,
@@ -71,97 +61,41 @@ export function Results() {
           )
         }
 
-        {/* <ReactSimplyCarousel
-          activeSlideIndex={currentCardIndex}
-          onRequestChange={setCurrentCardIndex}
-          itemsToShow={3}
-          itemsToScroll={1}
-          responsiveProps={[
-            {
-              itemsToShow: 3,
-              minWidth: 768,
-            },
-          ]}
-          speed={400}
-          easing="linear"
-          infinite={false}
-        >
-          {facts.length > 0 ? (
-            facts.map((fact, index) => (
-              <div className='px-4' key={index}>
-                <div className="w-56 h-56 flex flex-col gap-2 items-center justify-center p-4 bg-[#5433EB] rounded-2xl text-white">
-                  <div className="text-center text-5xl mb-4">{fact.emoji}</div>
-                  <div className="text-center text-2xl font-semibold">{fact.subtitle}</div>
-                  <div className="text-center">{fact.text}</div>
-                </div>
-              </div>
-            ))
-          ) : (
-              <div className='px-4'>
-                <div className="w-56 h-56 flex flex-col gap-2 items-center justify-center p-4 bg-[#5433EB] rounded-2xl text-white">
-                  <div className="text-center text-5xl mb-4">😆</div>
-                  <div className="text-center text-2xl font-semibold">Welcome Back!</div>
-                  <div className="text-center">We've missed you! Time to trend off again!</div>
-                </div>
-              </div>
-          )}
-        </ReactSimplyCarousel> */}
         <section className="embla">
           <div className="embla__viewport" ref={emblaRef}>
             <div className="embla__container">
-              <div className="embla__slide">
-                <div className="text-center text-5xl mb-4">😆</div>
-                <div className="text-center text-2xl font-semibold">Welcome Back!</div>
-                <div className="text-center">We've missed you! Time to trend off again!</div>
-              </div>
-              <div className="embla__slide">
-                <div className="text-center text-5xl mb-4">😆</div>
-                <div className="text-center text-2xl font-semibold">1Welcome Back!</div>
-                <div className="text-center">We've missed you! Time to trend off again!</div>
-              </div>
-              <div className="embla__slide">
-                <div className="text-center text-5xl mb-4">😆</div>
-                <div className="text-center text-2xl font-semibold">2Welcome Back!</div>
-                <div className="text-center">We've missed you! Time to trend off again!</div>
-              </div>
+              {facts.length > 0 ? (
+                facts.map((fact, index) => (
+                  <div className="embla__slide" key={index}>
+                    <div className="text-center text-5xl mb-4">{fact.emoji}</div>
+                    <div className="text-center text-2xl font-semibold">{fact.subtitle}</div>
+                    <div className="text-center">{fact.text}</div>
+                  </div>
+                ))
+              ) : (
+                <div className='px-4'>
+                  <div className="w-56 h-56 flex flex-col gap-2 items-center justify-center p-4 bg-[#5433EB] rounded-2xl text-white">
+                    <div className="text-center text-5xl mb-4">😆</div>
+                    <div className="text-center text-2xl font-semibold">Welcome Back!</div>
+                    <div className="text-center">We've missed you! Time to trend off again!</div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-
-          <div className="embla__controls">
-            <div className="embla__buttons">
-              <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} className={`w-8 h-8 text-white ${!emblaApi?.canScrollPrev() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} />
-              <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} className={`w-8 h-8 text-white ${!emblaApi?.canScrollNext() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} />
-            </div>
-          </div>
+          {
+            facts.length > 1 && (
+              <div className="embla__controls">
+                <div className="embla__buttons">
+                  <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} className={`w-8 h-8 text-white ${!emblaApi?.canScrollPrev() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} />
+                  <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} className={`w-8 h-8 text-white ${!emblaApi?.canScrollNext() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} />
+                </div>
+              </div>
+            )
+          }
         </section>
 
-
-
-        {/* <div className='flex justify-between items-center gap-6 mt-4 mb-6'>
-          <ArrowLeft 
-            className={`w-8 h-8 text-white ${!emblaApi?.canScrollPrev() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} 
-            onClick={scrollPrev}
-            aria-disabled={!emblaApi?.canScrollPrev()} 
-            // onClick={() => setCurrentCardIndex(currentCardIndex - 1)}
-            // aria-disabled={currentCardIndex === 0}
-          />
-          <ArrowRight 
-            className={`w-8 h-8 text-white ${!emblaApi?.canScrollNext() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} 
-            onClick={scrollNext}
-            aria-disabled={!emblaApi?.canScrollNext()}
-            // onClick={() => setCurrentCardIndex(currentCardIndex + 1)}
-            // aria-disabled={currentCardIndex === facts.length - 1}
-          />
-        </div> */}
-
-        {/* Share button */}
-        {/* <div className="mb-6">
-          <button className="w-[40px] h-[40px] rounded-full bg-white flex items-center justify-center">
-            <img src="/share.svg" alt="Share" className="w-5 h-5" />
-          </button>
-        </div> */}
-
-        <div className='flex flex-col items-center justify-center gap-4 bg-white/10 w-4/5 h-fit p-2 rounded-2xl mb-8'>
+        <div className='flex flex-col items-center justify-center gap-4 bg-white/10 w-4/5 h-fit p-2 rounded-2xl mt-8 mb-8'>
           <p className='text-2xl text-white'>Coming Soon!</p>
           <div className='flex'>
             <div className='bg-[#b4a6f6] p-2 w-14 h-14 rounded-full flex items-center justify-center border border-black'>
