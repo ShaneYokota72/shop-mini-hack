@@ -1,8 +1,11 @@
 import { useContext, useEffect, useState } from 'react'
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE, Button} from '@shopify/shop-minis-react'
-import { ArrowLeft, ArrowRight, Trophy, User } from 'lucide-react'
+import { Trophy, User } from 'lucide-react'
 import ReactSimplyCarousel from 'react-simply-carousel';
 import { TrendOffContext } from '../context/TrendOffContext';
+import useEmblaCarousel from 'embla-carousel-react'
+import { EmblaCarouselType } from 'embla-carousel';
+import { NextButton, PrevButton, usePrevNextButtons } from './EmberCarouselButton';
 interface Fact {
   emoji: string;
   subtitle: string;
@@ -10,10 +13,28 @@ interface Fact {
 }
 
 export function Results() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'center',
+    startIndex: 0,
+  })
   const navigation = useNavigateWithTransition()
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [facts, setFacts] = useState<Fact[]>([]);
   const { user } = useContext(TrendOffContext);
+
+  // const scrollPrev = useCallback(() => {
+  //   if (emblaApi) emblaApi.scrollPrev()
+  // }, [emblaApi])
+
+  // const scrollNext = useCallback(() => {
+  //   if (emblaApi) emblaApi.scrollNext()
+  // }, [emblaApi])
+
+  const {
+    prevBtnDisabled,
+    nextBtnDisabled,
+    onPrevButtonClick,
+    onNextButtonClick
+  } = usePrevNextButtons(emblaApi)
 
   const handleViewWinners = async () => {
     document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
@@ -50,7 +71,7 @@ export function Results() {
           )
         }
 
-        <ReactSimplyCarousel
+        {/* <ReactSimplyCarousel
           activeSlideIndex={currentCardIndex}
           onRequestChange={setCurrentCardIndex}
           itemsToShow={3}
@@ -76,7 +97,7 @@ export function Results() {
               </div>
             ))
           ) : (
-            <div className='px-4'>
+              <div className='px-4'>
                 <div className="w-56 h-56 flex flex-col gap-2 items-center justify-center p-4 bg-[#5433EB] rounded-2xl text-white">
                   <div className="text-center text-5xl mb-4">😆</div>
                   <div className="text-center text-2xl font-semibold">Welcome Back!</div>
@@ -84,20 +105,54 @@ export function Results() {
                 </div>
               </div>
           )}
-        </ReactSimplyCarousel>
-        
-        <div className='flex justify-between items-center gap-6 mt-4 mb-6'>
+        </ReactSimplyCarousel> */}
+        <section className="embla">
+          <div className="embla__viewport" ref={emblaRef}>
+            <div className="embla__container">
+              <div className="embla__slide">
+                <div className="text-center text-5xl mb-4">😆</div>
+                <div className="text-center text-2xl font-semibold">Welcome Back!</div>
+                <div className="text-center">We've missed you! Time to trend off again!</div>
+              </div>
+              <div className="embla__slide">
+                <div className="text-center text-5xl mb-4">😆</div>
+                <div className="text-center text-2xl font-semibold">1Welcome Back!</div>
+                <div className="text-center">We've missed you! Time to trend off again!</div>
+              </div>
+              <div className="embla__slide">
+                <div className="text-center text-5xl mb-4">😆</div>
+                <div className="text-center text-2xl font-semibold">2Welcome Back!</div>
+                <div className="text-center">We've missed you! Time to trend off again!</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="embla__controls">
+            <div className="embla__buttons">
+              <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} className={`w-8 h-8 text-white ${!emblaApi?.canScrollPrev() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} />
+              <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} className={`w-8 h-8 text-white ${!emblaApi?.canScrollNext() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} />
+            </div>
+          </div>
+        </section>
+
+
+
+        {/* <div className='flex justify-between items-center gap-6 mt-4 mb-6'>
           <ArrowLeft 
-            className={`w-8 h-8 text-white ${currentCardIndex === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} 
-            onClick={() => setCurrentCardIndex(currentCardIndex - 1)}
-            aria-disabled={currentCardIndex === 0}
+            className={`w-8 h-8 text-white ${!emblaApi?.canScrollPrev() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} 
+            onClick={scrollPrev}
+            aria-disabled={!emblaApi?.canScrollPrev()} 
+            // onClick={() => setCurrentCardIndex(currentCardIndex - 1)}
+            // aria-disabled={currentCardIndex === 0}
           />
           <ArrowRight 
-            className={`w-8 h-8 text-white ${currentCardIndex === facts.length - 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} 
-            onClick={() => setCurrentCardIndex(currentCardIndex + 1)}
-            aria-disabled={currentCardIndex === facts.length - 1}
+            className={`w-8 h-8 text-white ${!emblaApi?.canScrollNext() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} 
+            onClick={scrollNext}
+            aria-disabled={!emblaApi?.canScrollNext()}
+            // onClick={() => setCurrentCardIndex(currentCardIndex + 1)}
+            // aria-disabled={currentCardIndex === facts.length - 1}
           />
-        </div>
+        </div> */}
 
         {/* Share button */}
         {/* <div className="mb-6">

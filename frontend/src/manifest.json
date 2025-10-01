@@ -1,8 +1,9 @@
 {
   "name": "Trend Off",
+  "description": "Compete with others on Trends",
   "permissions": [],
   "trusted_domains": ["trendoff.vercel.app"],
   "privacy_policy_url": "https://example.com/privacy",
   "terms_url": "https://example.com/terms",
-  "handle": "Trend Off"
+  "handle": "trend-off"
 }
