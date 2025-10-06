@@ -14,6 +14,10 @@ export async function GET(request: NextRequest) {
         endPst.setHours(23, 59, 59, 999);
         const isoPST = format(pstDate, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone : pstTimeZone });
 
+        console.log('startPst:', startPst);
+        console.log('endPst:', endPst);
+        console.log('isoPST:', isoPST);
+
         const { count, error: countError } = await supabase
             .from('Entry')
             .select('*', { count: 'exact', head: true })
@@ -23,6 +27,8 @@ export async function GET(request: NextRequest) {
         if (countError) {
             throw new Error(countError.message);
         }
+
+        console.log('updating', isoPST.split('T')[0], ' with count:', count);
 
         const { data, error } = await supabase
             .from('DailyChallenge')
