@@ -10,8 +10,6 @@ export async function GET(req: NextRequest) {
         yesterday.setDate(yesterday.getDate() - 1);
         const pstDate = toZonedTime(yesterday, pstTimeZone);
         const isoPST = format(pstDate, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone : pstTimeZone });
-        console.log('pstDate:', pstDate);
-        console.log('isoPST:', isoPST);
 
         const { data, error } = await supabase
             .from('DailyChallenge')

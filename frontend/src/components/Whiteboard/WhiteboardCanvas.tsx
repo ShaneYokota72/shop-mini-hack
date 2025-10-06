@@ -14,6 +14,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { IconButton } from '@shopify/shop-minis-react';
 import { clsx } from 'clsx';
 import { Trash2 } from 'lucide-react';
+import { forwardRef } from 'react';
 
 export interface WhiteboardItem {
   id: string
@@ -26,6 +27,7 @@ export interface WhiteboardItem {
 }
 
 interface WhiteboardCanvasProps {
+  ref: React.RefObject<HTMLDivElement>
   items: WhiteboardItem[]
   onDragEnd: (event: DragEndEvent) => void
   selectedItemId: string | null
@@ -95,7 +97,7 @@ function DraggableItem({
   )
 }
 
-export function WhiteboardCanvas({ items, onDragEnd, selectedItemId, onItemSelect, handleDeleteSelected }: WhiteboardCanvasProps) {
+export const WhiteboardCanvas = forwardRef<HTMLDivElement, WhiteboardCanvasProps>(({ items, onDragEnd, selectedItemId, onItemSelect, handleDeleteSelected }, ref) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -106,7 +108,7 @@ export function WhiteboardCanvas({ items, onDragEnd, selectedItemId, onItemSelec
   )
 
   return (
-    <div className="relative flex-1 flex items-start justify-center my-4">
+    <div ref={ref} className="relative flex-1 flex items-start justify-center my-4">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -114,8 +116,7 @@ export function WhiteboardCanvas({ items, onDragEnd, selectedItemId, onItemSelec
       >
         <div 
           data-whiteboard-canvas
-          className="relative bg-white rounded-lg shadow-lg border-2 border-gray-200 select-none overflow-hidden"
-          style={{ width: '100%', height: '560px' }}
+          className="absolute bg-white rounded-lg shadow-lg border-2 border-gray-200 select-none overflow-hidden w-full h-full"
         >
           <div className="absolute top-2 right-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded z-10">
             Items: {items.length}
@@ -131,7 +132,7 @@ export function WhiteboardCanvas({ items, onDragEnd, selectedItemId, onItemSelec
           ))}
           
           {items.length === 0 && (
-            <div className="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none">
+            <div className="absolute inset-0 flex items-center justify-center rounded-lg text-gray-400 pointer-events-none bg-white">
               <div className="text-center">
                 <div className="text-4xl mb-2">👕</div>
                 <p className="text-sm">Add items to create your outfit</p>
@@ -146,4 +147,4 @@ export function WhiteboardCanvas({ items, onDragEnd, selectedItemId, onItemSelec
       )}
     </div>
   )
-} 
+})

@@ -95,7 +95,7 @@ export function Results() {
           }
         </section>
 
-        <div className='flex flex-col items-center justify-center gap-4 bg-white/10 w-4/5 h-fit p-2 rounded-2xl mt-8 mb-8'>
+        {/* <div className='flex flex-col items-center justify-center gap-4 bg-white/10 w-4/5 h-fit p-2 rounded-2xl mt-8 mb-8'>
           <p className='text-2xl text-white'>Coming Soon!</p>
           <div className='flex'>
             <div className='bg-[#b4a6f6] p-2 w-14 h-14 rounded-full flex items-center justify-center border border-black'>
@@ -109,9 +109,9 @@ export function Results() {
             </div>
           </div>
           <p className='text-white'>X friends played</p>
-        </div>
+        </div> */}
 
-        <Button onClick={handleViewWinners} className='rounded-full !w-fit mx-auto px-4 py-2'>View Winners</Button>
+        <Button onClick={handleViewWinners} className='rounded-full !w-fit mt-8 mx-auto px-4 py-2'>View Winners</Button>
       </div>
     </div>
   )

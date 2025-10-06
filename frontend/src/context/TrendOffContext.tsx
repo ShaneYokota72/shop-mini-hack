@@ -99,7 +99,17 @@ export const TrendOffProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             if (user) {
                 const response = await fetch(`${import.meta.env.VITE_TREND_OFF_ENDPOINT}/api/user/get?id=${user}`);
                 const { data } = await response.json();
-                setUser(data);
+
+                // case where there is no user found with that id in supabase
+                // fall back to creating a new user
+                if (data === null) {
+                    const newUser = await createUser()
+                    if (newUser && newUser?.id) {
+                        await setItem({key: 'userId', value: newUser.id})
+                    }
+                } else { // expect flow
+                    setUser(data);
+                }
             } else {
                 const user = await createUser()
                 if (user && user?.id) {

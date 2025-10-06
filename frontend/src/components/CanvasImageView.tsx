@@ -13,17 +13,17 @@ export default function CanvasImageView({
 
   return (
     <>
-        <div className='flex items-center justify-center mx-auto pt-4 text-white text-2xl font-semibold gap-24'>
+        <div className='h-fit flex items-center justify-center mx-auto pt-4 text-white text-2xl font-semibold gap-24'>
             <p onClick={() => setIsCanvasView(true)} className={`${isCanvasView ? '' : 'text-slate-400'}`}>Canvas</p>
             <p onClick={() => setIsCanvasView(false)} className={`${!isCanvasView ? '' : 'text-slate-400'}`}>Image</p>
         </div>
 
-        <div className='text-white mt-4'>
+        <div className='text-white mt-4 flex-1 flex items-center justify-center'>
             {
                 isCanvasView ? (
-                    <img src={canvasImage} alt="Canvas Image" className="mx-auto w-[85%] rounded-3xl aspect-[9/13] object-cover" />
+                    <img src={canvasImage} alt="Canvas Image" className="mx-auto rounded-3xl max-h-full max-w-[85%] object-contain" />
                 ) : (
-                    <img src={genImage} alt="Generated Image" className="mx-auto w-[85%] rounded-3xl aspect-[9/13] object-cover" />
+                    <img src={genImage} alt="Generated Image" className="mx-auto rounded-3xl max-h-full max-w-[85%] object-contain" />
                 )
             }
         </div>

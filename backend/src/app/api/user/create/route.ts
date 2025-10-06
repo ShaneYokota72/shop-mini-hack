@@ -15,9 +15,6 @@ export async function POST(req: NextRequest) {
             throw new Error(error.message);
         }
 
-        console.log('User created:', data);
-        console.log('User creation error:', error);
-
         return NextResponse.json({ data });
     } catch (error) {
         console.log('error:', error);

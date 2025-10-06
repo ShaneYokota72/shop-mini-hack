@@ -65,14 +65,16 @@ export function Submission() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col">
-      <CanvasImageView
-        canvasImage={canvasImgSrc}
-        genImage={generatedImageUrl}
-      />
+    <div className="min-h-screen max-h-screen bg-black flex flex-col">
+      <div className='flex-1 flex flex-col'>
+        <CanvasImageView
+          canvasImage={canvasImgSrc}
+          genImage={generatedImageUrl}
+        />
+      </div>
 
-      <div className="flex-1 p-6 flex flex-col justify-between">
-        <div className="max-w-md">
+      <div className="h-fit p-6 flex flex-col justify-between">
+        <div className="h-fit max-w-md">
           <input
             id="title"
             type="text"
@@ -83,7 +85,7 @@ export function Submission() {
             autoFocus
           />
         </div>
-        <div className="flex items-center justify-between">
+        <div className="h-fit flex items-center justify-between mt-2">
           <button
             onClick={handleGoBack}
             className="w-20 text-white bg-[#3E3E3E] rounded-full py-2 text-center"

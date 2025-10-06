@@ -1,15 +1,15 @@
-import {useContext, useEffect, useState} from 'react'
+import {useContext, useEffect, useRef, useState} from 'react'
 import { DragEndEvent } from '@dnd-kit/core'
 import { WhiteboardCanvas, WhiteboardItem } from './WhiteboardCanvas'
 import { IconButton, Input, Product, ProductCard, useImageUpload, useProductSearch } from '@shopify/shop-minis-react'
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE} from '@shopify/shop-minis-react'
 import { TrendOffContext } from '../../context/TrendOffContext'
 import { CircleAlert, X } from 'lucide-react'
-import { Sheet } from 'react-modal-sheet'
+import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from '@shopify/shop-minis-react'
 
 export function Whiteboard() {
+  const whiteboardRef = useRef<HTMLDivElement>(null); 
   const [items, setItems] = useState<WhiteboardItem[]>([])
-  const [showAddPanel, setShowAddPanel] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [submittedQuery, setSubmittedQuery] = useState('')
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
@@ -34,8 +34,8 @@ export function Whiteboard() {
       if (!ctx) return ''
 
       // Set canvas size
-      canvas.width = window.innerWidth
-      canvas.height = 560
+      canvas.width = (whiteboardRef?.current?.clientWidth || 350) || window.innerWidth
+      canvas.height = (whiteboardRef?.current?.clientHeight || 400) || window.innerHeight
 
       // Fill white background
       ctx.fillStyle = '#ffffff'
@@ -124,15 +124,14 @@ export function Whiteboard() {
     const newItem: WhiteboardItem = {
       id: `item-${Date.now()}-${Math.random()}`,
       imageUrl: image.featuredImage?.url || '',
-      productId: image.id, // Store the actual product ID (or dummy ID for fallback images)
-      x: 200, // Center horizontally (500px whiteboard - 100px item = 400px / 2 = 200px)
-      y: 150, // Center vertically (400px whiteboard - 100px item = 300px / 2 = 150px)
-      width: 100,
-      height: 100
+      productId: image.id,
+      x: 0,
+      y: 0,
+      width: 150,
+      height: 150
     }
     setItems(prev => [...prev, newItem])
     setProductIds([...productIds, image.id])
-    setShowAddPanel(false)
     setSearchQuery('')
   }
 
@@ -143,8 +142,9 @@ export function Whiteboard() {
 
     setItems(items => items.map(item => {
       if (item.id === active.id) {
-        const newX = Math.max(0, Math.min(item.x + delta.x, window.innerWidth - 100)) // Max screen width - 100px
-        const newY = Math.max(0, Math.min(item.y + delta.y, 460)) // Max 460px (560-100)
+        const newX = Math.max(0, Math.min(item.x + delta.x, (whiteboardRef?.current?.clientWidth || 150) - 150 || window.innerWidth - 150))
+        const newY = Math.max(0, Math.min(item.y + delta.y, (whiteboardRef?.current?.clientHeight || 150) - 150 || window.innerHeight - 200))
+
         return {
           ...item,
           x: newX,
@@ -180,46 +180,48 @@ export function Whiteboard() {
   return (
     <div className="min-h-screen h-full bg-black flex flex-col py-8">
       <h1 className="text-2xl font-bold text-white text-center">{todayPrompt}</h1>
-      <WhiteboardCanvas
-        items={items}
-        onDragEnd={handleDragEnd}
-        selectedItemId={selectedItemId}
-        onItemSelect={handleItemClick}
-        handleDeleteSelected={handleDeleteSelected}
-      />
+      <div className='w-full h-full flex flex-col flex-1'>
+        <Drawer>
+          <WhiteboardCanvas
+            ref={whiteboardRef}
+            items={items}
+            onDragEnd={handleDragEnd}
+            selectedItemId={selectedItemId}
+            onItemSelect={handleItemClick}
+            handleDeleteSelected={handleDeleteSelected}
+          />
 
-      <div className="flex items-center justify-between px-6">
-        <button
-          onClick={handleGoBack}
-          className="w-20 text-white bg-[#3E3E3E] rounded-full py-2 text-center"
-        >
-          Close
-        </button>
-        <div
-          onClick={() => setShowAddPanel(true)}
-          className="w-12 h-12 bg-white text-black rounded-full text-4xl flex items-center justify-center"
-        >
-          +
-        </div>
-        <button
-          onClick={handleNext}
-          className="w-20 text-white bg-[#5433EB] rounded-full py-2 text-center"
-        >
-          Next
-        </button>
-      </div>
+          <div className="h-fit flex items-center justify-between px-6">
+            <button
+              onClick={handleGoBack}
+              className="w-20 text-white bg-[#3E3E3E] rounded-full py-2 text-center"
+            >
+              Close
+            </button>
+            <DrawerTrigger
+              className="w-12 h-12 bg-white text-black rounded-full text-4xl flex items-center justify-center"
+            >
+              +
+            </DrawerTrigger>
+            <button
+              onClick={handleNext}
+              className="w-20 text-white bg-[#5433EB] rounded-full py-2 text-center"
+            >
+              Next
+            </button>
+          </div>
 
-      <Sheet isOpen={showAddPanel} onClose={() => {setShowAddPanel(false); setSearchQuery('')}}>
-        <Sheet.Container>
-          <Sheet.Content>
-            <div className="bg-[#DFDFDF] p-4 h-full flex flex-col items-center">
+          <DrawerContent style={{height: '100vh'}}>
+            <div className="bg-white p-4 h-full flex flex-col items-center">
               <div className="w-full flex justify-end">
-                <IconButton 
-                  Icon={X} 
-                  onClick={() => {setShowAddPanel(false); setSearchQuery('')}} 
-                  buttonStyles='bg-[#CECECE] rounded-full w-12 h-12 mb-4' 
-                  iconStyles='h-6 w-6 text-black'
-                />
+                <DrawerClose asChild>
+                  {/* <Button variant="outline">Cancel</Button> */}
+                  <IconButton
+                    Icon={X}
+                    buttonStyles='bg-[#CECECE] rounded-full w-12 h-12 mb-4'
+                    iconStyles='h-6 w-6 text-black'
+                  />
+                </DrawerClose>
               </div>
 
               <Input 
@@ -238,13 +240,15 @@ export function Whiteboard() {
                 products && products.length > 0 ? (
                   <div className="grid grid-cols-2 gap-4 mt-4 w-full overflow-y-scroll">
                     {products?.map((product) => (
-                      <div key={product.id} onClick={() => addImageToWhiteboard(product)}>
-                        <ProductCard 
-                          key={product.id}
-                          product={product}
-                          touchable={false}
-                        />
-                      </div>
+                      <DrawerClose asChild>
+                        <div key={product.id} onClick={() => addImageToWhiteboard(product)}>
+                          <ProductCard 
+                            key={product.id}
+                            product={product}
+                            touchable={false}
+                          />
+                        </div>
+                      </DrawerClose>
                     ))}
                   </div>
                 ) : (
@@ -271,10 +275,9 @@ export function Whiteboard() {
                 )
               }
             </div>
-          </Sheet.Content>
-        </Sheet.Container>
-        <Sheet.Backdrop />
-      </Sheet>
+          </DrawerContent>
+        </Drawer>
+      </div>
     </div>
   )
 }
