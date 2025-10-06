@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
             .single();
 
         if (error) {
-            throw new Error(error.message);
+            console.log('error:', error);
         }
 
         return NextResponse.json({ data });

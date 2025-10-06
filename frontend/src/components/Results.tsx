@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from 'react'
 import {useNavigateWithTransition, NAVIGATION_TYPES, DATA_NAVIGATION_TYPE_ATTRIBUTE, Button} from '@shopify/shop-minis-react'
-import { ArrowLeft, ArrowRight, Trophy, User } from 'lucide-react'
-import ReactSimplyCarousel from 'react-simply-carousel';
+import { Trophy, User } from 'lucide-react'
 import { TrendOffContext } from '../context/TrendOffContext';
+import useEmblaCarousel from 'embla-carousel-react'
+import { NextButton, PrevButton, usePrevNextButtons } from './EmberCarouselButton';
 interface Fact {
   emoji: string;
   subtitle: string;
@@ -10,10 +11,20 @@ interface Fact {
 }
 
 export function Results() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'center',
+    startIndex: 0,
+  })
   const navigation = useNavigateWithTransition()
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [facts, setFacts] = useState<Fact[]>([]);
   const { user } = useContext(TrendOffContext);
+
+  const {
+    prevBtnDisabled,
+    nextBtnDisabled,
+    onPrevButtonClick,
+    onNextButtonClick
+  } = usePrevNextButtons(emblaApi)
 
   const handleViewWinners = async () => {
     document.documentElement.setAttribute(DATA_NAVIGATION_TYPE_ATTRIBUTE, NAVIGATION_TYPES.forward);
@@ -50,63 +61,41 @@ export function Results() {
           )
         }
 
-        <ReactSimplyCarousel
-          activeSlideIndex={currentCardIndex}
-          onRequestChange={setCurrentCardIndex}
-          itemsToShow={3}
-          itemsToScroll={1}
-          responsiveProps={[
-            {
-              itemsToShow: 3,
-              minWidth: 768,
-            },
-          ]}
-          speed={400}
-          easing="linear"
-          infinite={false}
-        >
-          {facts.length > 0 ? (
-            facts.map((fact, index) => (
-              <div className='px-4' key={index}>
-                <div className="w-56 h-56 flex flex-col gap-2 items-center justify-center p-4 bg-[#5433EB] rounded-2xl text-white">
-                  <div className="text-center text-5xl mb-4">{fact.emoji}</div>
-                  <div className="text-center text-2xl font-semibold">{fact.subtitle}</div>
-                  <div className="text-center">{fact.text}</div>
+        <section className="embla">
+          <div className="embla__viewport" ref={emblaRef}>
+            <div className="embla__container">
+              {facts.length > 0 ? (
+                facts.map((fact, index) => (
+                  <div className="embla__slide" key={index}>
+                    <div className="text-center text-5xl mb-4">{fact.emoji}</div>
+                    <div className="text-center text-2xl font-semibold">{fact.subtitle}</div>
+                    <div className="text-center">{fact.text}</div>
+                  </div>
+                ))
+              ) : (
+                <div className='px-4'>
+                  <div className="w-56 h-56 flex flex-col gap-2 items-center justify-center p-4 bg-[#5433EB] rounded-2xl text-white">
+                    <div className="text-center text-5xl mb-4">😆</div>
+                    <div className="text-center text-2xl font-semibold">Welcome Back!</div>
+                    <div className="text-center">We've missed you! Time to trend off again!</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          {
+            facts.length > 1 && (
+              <div className="embla__controls">
+                <div className="embla__buttons">
+                  <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} className={`w-8 h-8 text-white ${!emblaApi?.canScrollPrev() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} />
+                  <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} className={`w-8 h-8 text-white ${!emblaApi?.canScrollNext() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} />
                 </div>
               </div>
-            ))
-          ) : (
-            <div className='px-4'>
-                <div className="w-56 h-56 flex flex-col gap-2 items-center justify-center p-4 bg-[#5433EB] rounded-2xl text-white">
-                  <div className="text-center text-5xl mb-4">😆</div>
-                  <div className="text-center text-2xl font-semibold">Welcome Back!</div>
-                  <div className="text-center">We've missed you! Time to trend off again!</div>
-                </div>
-              </div>
-          )}
-        </ReactSimplyCarousel>
-        
-        <div className='flex justify-between items-center gap-6 mt-4 mb-6'>
-          <ArrowLeft 
-            className={`w-8 h-8 text-white ${currentCardIndex === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} 
-            onClick={() => setCurrentCardIndex(currentCardIndex - 1)}
-            aria-disabled={currentCardIndex === 0}
-          />
-          <ArrowRight 
-            className={`w-8 h-8 text-white ${currentCardIndex === facts.length - 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} 
-            onClick={() => setCurrentCardIndex(currentCardIndex + 1)}
-            aria-disabled={currentCardIndex === facts.length - 1}
-          />
-        </div>
+            )
+          }
+        </section>
 
-        {/* Share button */}
-        {/* <div className="mb-6">
-          <button className="w-[40px] h-[40px] rounded-full bg-white flex items-center justify-center">
-            <img src="/share.svg" alt="Share" className="w-5 h-5" />
-          </button>
-        </div> */}
-
-        <div className='flex flex-col items-center justify-center gap-4 bg-white/10 w-4/5 h-fit p-2 rounded-2xl mb-8'>
+        {/* <div className='flex flex-col items-center justify-center gap-4 bg-white/10 w-4/5 h-fit p-2 rounded-2xl mt-8 mb-8'>
           <p className='text-2xl text-white'>Coming Soon!</p>
           <div className='flex'>
             <div className='bg-[#b4a6f6] p-2 w-14 h-14 rounded-full flex items-center justify-center border border-black'>
@@ -120,9 +109,9 @@ export function Results() {
             </div>
           </div>
           <p className='text-white'>X friends played</p>
-        </div>
+        </div> */}
 
-        <Button onClick={handleViewWinners} className='rounded-full !w-fit mx-auto px-4 py-2'>View Winners</Button>
+        <Button onClick={handleViewWinners} className='rounded-full !w-fit mt-8 mx-auto px-4 py-2'>View Winners</Button>
       </div>
     </div>
   )

@@ -15,7 +15,7 @@ const LoadingSpinner = ({ yesterdayPrompt }: { yesterdayPrompt: string }) => (
     <div className="relative">
       <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
     </div>
-    <p className="mt-4 text-lg font-medium">Loading {yesterdayPrompt}...</p>
+    <p className="w-4/5 text-center mt-4 text-lg font-medium">Loading {yesterdayPrompt}...</p>
   </div>
 )
 

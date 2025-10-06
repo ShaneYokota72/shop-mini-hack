@@ -14,7 +14,6 @@ export default function Winner() {
   useEffect(() => {
     const fetchWinners = async () => {
       try {
-        console.log('Fetching winners...')
         setLoading(true)
         setError(null)
         
@@ -96,8 +95,8 @@ export default function Winner() {
       <div className='min-h-screen bg-[#0D0D0D] px-2 text-white flex flex-col items-center justify-center'>
         <div className="text-center">
           <div className="text-6xl mb-4">🏆</div>
-          <h1 className="text-2xl font-bold mb-4">No Winners Yet</h1>
-          <p className="text-gray-300 mb-6">Create some outfits and vote to see winners!</p>
+          <h1 className="text-2xl font-bold mb-4">No Winners For Yesterday</h1>
+          <p className="text-gray-300 mb-6">Trend off and vote tomorrow to see winners!</p>
           <button 
             onClick={() => navigation('/results')}
             className="text-white bg-[#5433EB] rounded-full py-2 px-4"
